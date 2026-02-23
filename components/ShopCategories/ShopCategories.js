@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import Button from '../Button/Button';
-import { FiSmartphone, FiMonitor, FiWatch, FiHeadphones, FiShield, FiBatteryCharging, FiZap, FiRefreshCcw } from 'react-icons/fi';
+import { FiSmartphone, FiMonitor, FiWatch, FiHeadphones, FiShield, FiBatteryCharging, FiZap, FiRefreshCcw, FiTablet, FiSpeaker, FiCpu, FiHardDrive, FiWifi, FiPenTool, FiLayers, FiCamera } from 'react-icons/fi';
 
 export default function ShopCategories() {
     const categories = [
@@ -12,6 +13,21 @@ export default function ShopCategories() {
         { name: "Fast Chargers", icon: <FiZap /> },
         { name: "Power Banks", icon: <FiBatteryCharging /> },
         { name: "Used Phones", icon: <FiRefreshCcw /> },
+        { name: "iPads & Tablets", icon: <FiTablet /> },
+        { name: "Smart Speakers", icon: <FiSpeaker /> },
+        { name: "Storage & Drives", icon: <FiHardDrive /> },
+        { name: "Routers & WiFi", icon: <FiWifi /> },
+        { name: "Smart Home", icon: <FiCpu /> },
+        { name: "Repair Tools", icon: <FiPenTool /> },
+        { name: "Screen Protectors", icon: <FiLayers /> },
+        { name: "Cameras & Lenses", icon: <FiCamera /> },
+    ];
+
+    const flashSaleProducts = [
+        { name: "iPhone 14 Pro - 256GB", price: "৳115,000", oldPrice: "৳130,000", image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=600" },
+        { name: "Apple Watch Series 8", price: "৳42,000", oldPrice: "৳48,000", image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=600" },
+        { name: "Samsung Galaxy S23 Ultra", price: "৳125,000", oldPrice: "৳140,000", image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=600" },
+        { name: "Anker 10000mAh Power Bank", price: "৳2,200", oldPrice: "৳3,000", image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?q=80&w=600" },
     ];
 
     return (
@@ -43,7 +59,7 @@ export default function ShopCategories() {
 
                 {/* Flash Sale Banner Placeholder */}
                 <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden shadow-xl">
-                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-10">
                         <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12">
                             <h3 className="text-3xl md:text-4xl font-extrabold whitespace-nowrapflex items-center gap-3">
                                 <span className="text-brand-orange">🔥</span> Flash Sale
@@ -66,10 +82,32 @@ export default function ShopCategories() {
 
                         <div className="flex flex-col items-start md:items-end gap-4 text-left md:text-right">
                             <p className="text-lg text-gray-300 font-medium">Up to <span className="text-brand-orange font-bold text-xl">50% OFF</span> on select accessories and gadgets.</p>
-                            <button className="bg-white text-gray-900 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg shadow-lg transition-transform hover:scale-105">
+                            <button className="bg-white text-gray-900 hover:bg-brand-orange hover:text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all hover:scale-105">
                                 Shop Now
                             </button>
                         </div>
+                    </div>
+
+                    {/* Flash Sale Products Grid */}
+                    <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-8">
+                        {flashSaleProducts.map((product, idx) => (
+                            <div key={idx} className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 hover:bg-white/20 transition-all cursor-pointer group flex flex-col">
+                                <div className="w-full aspect-square relative rounded-xl overflow-hidden mb-4 bg-white/5">
+                                    <Image
+                                        src={product.image}
+                                        alt={product.name}
+                                        fill
+                                        unoptimized
+                                        className="object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                                    />
+                                </div>
+                                <h4 className="font-bold text-white text-sm md:text-base leading-tight mb-2 line-clamp-2">{product.name}</h4>
+                                <div className="mt-auto flex items-end gap-2">
+                                    <span className="text-brand-orange font-black text-lg">{product.price}</span>
+                                    <span className="text-gray-400 text-xs line-through mb-0.5">{product.oldPrice}</span>
+                                </div>
+                            </div>
+                        ))}
                     </div>
 
                     {/* Decorative bg elements */}

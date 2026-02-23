@@ -1,67 +1,109 @@
+"use client";
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Button from '../Button/Button';
+import Image from 'next/image';
 
 export default function Hero() {
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    const slides = [
+        {
+            id: 1,
+            badge: "Expert Repairs",
+            title: "Fast & Reliable Fixes",
+            desc: "Genuine parts and certified technicians for all your devices.",
+            ctaText: "Book Repair",
+            ctaLink: "/book-repair",
+            imageUrl: "https://images.unsplash.com/photo-1611396000732-f8c9a933424f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        },
+        {
+            id: 2,
+            badge: "Screen Replacement",
+            title: "Flawless Screen Repairs",
+            desc: "Bring your shattered displays back to life in under an hour.",
+            ctaText: "Learn More",
+            ctaLink: "/services",
+            imageUrl: "https://images.unsplash.com/photo-1576613109753-27804de2cba8?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        },
+        {
+            id: 3,
+            badge: "Premium Gadgets",
+            title: "The Latest Tech",
+            desc: "Upgrade to the newest smartphones, laptops, and wearables.",
+            ctaText: "Shop Gadgets",
+            ctaLink: "/shop",
+            imageUrl: "https://images.unsplash.com/photo-1697545806245-9795b6056141?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        },
+        {
+            id: 4,
+            badge: "Exclusive Offers",
+            title: "Up to 50% Off Accessories",
+            desc: "Grab limited-time deals on chargers, power banks, and cases.",
+            ctaText: "View Offers",
+            ctaLink: "/category/accessories",
+            imageUrl: "https://images.unsplash.com/photo-1515940175183-6798529cb860?q=80&w=1329&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        }
+    ];
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % slides.length);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, [slides.length]);
+
     return (
-        <section className="flex flex-col md:flex-row w-full min-h-[600px] bg-white">
-            {/* Repair Side */}
-            <div className="flex-1 w-full bg-white relative flex flex-col justify-center px-8 md:px-16 py-16 md:py-24 border-b md:border-b-0 md:border-r border-gray-100 overflow-hidden">
-                {/* Background Decorative Element */}
-                <div className="absolute -left-20 -bottom-20 opacity-5 pointer-events-none">
-                    <svg width="400" height="400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22l-1.92 3.32c-.12.21-.07.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
-                    </svg>
-                </div>
+        <section className="w-full bg-white py-4 md:py-8 px-4 md:px-6">
+            <div className="max-w-7xl mx-auto relative overflow-hidden rounded-xl h-[400px] md:h-[500px] shadow-lg border border-gray-100">
+                {slides.map((slide, idx) => (
+                    <div
+                        key={slide.id}
+                        className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${currentSlide === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                    >
+                        {/* Full Width Background Image */}
+                        <Image
+                            src={slide.imageUrl}
+                            alt={slide.title}
+                            fill
+                            unoptimized
+                            className="object-cover object-center z-0"
+                            priority={idx === 0}
+                        />
 
-                <div className="relative z-10 max-w-lg">
-                    <div className="inline-block bg-brand-orange/10 text-brand-orange font-semibold py-1 px-3 rounded-full text-xs uppercase tracking-wider mb-6">
-                        Expert Repairs
-                    </div>
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
-                        We Fix It As Fast As You Can Break It.
-                    </h1>
-                    <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                        From shattered screens to silent speakers, our certified technicians revive your devices using genuine spare parts and state-of-the-art tools.
-                    </p>
-                    <div className="flex items-center gap-4">
-                        <Link href="/book-repair" className="inline-block">
-                            <button className="bg-brand-orange hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-orange-500/30 transition-all transform hover:-translate-y-1">
-                                Book a Repair
-                            </button>
-                        </Link>
-                        <span className="text-sm font-medium text-gray-500 flex flex-col">
-                            <span className="text-gray-900 font-bold">1-Hour</span> Turnaround
-                        </span>
-                    </div>
-                </div>
-            </div>
+                        {/* Lighter Gradient Overlay - Darker on the left for text, fading to transparent on the right */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10 z-10"></div>
 
-            {/* Shop Side */}
-            <div className="flex-1 w-full bg-gray-50 relative flex flex-col justify-center px-8 md:px-16 py-16 md:py-24 overflow-hidden">
-                {/* Background Decorative Element */}
-                <div className="absolute -right-20 -bottom-20 opacity-5 pointer-events-none">
-                    <svg width="400" height="400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z" />
-                    </svg>
-                </div>
+                        {/* Left-Aligned Text Content */}
+                        <div className="relative z-20 flex flex-col items-start justify-center h-full text-left px-8 md:px-16 lg:px-24">
+                            <div className="bg-brand-orange text-white font-bold py-1 px-2 mb-3 rounded-full text-[10px] uppercase tracking-wider shadow-sm">
+                                {slide.badge}
+                            </div>
+                            <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-snug mb-2 drop-shadow-md max-w-lg">
+                                {slide.title}
+                            </h2>
+                            <p className="text-xs sm:text-sm text-gray-200 mb-6 max-w-md drop-shadow leading-relaxed">
+                                {slide.desc}
+                            </p>
+                            <Link href={slide.ctaLink} className="inline-block">
+                                <button className="bg-brand-orange hover:bg-orange-600 text-white font-bold text-xs py-2 px-6 rounded-md shadow hover:shadow-orange-500/40 transition-all transform hover:-translate-y-0.5">
+                                    {slide.ctaText}
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
+                ))}
 
-                <div className="relative z-10 max-w-lg md:ml-auto">
-                    <div className="inline-block bg-brand-blue/10 text-brand-blue font-semibold py-1 px-3 rounded-full text-xs uppercase tracking-wider mb-6">
-                        Premium Gadgets
-                    </div>
-                    <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-6">
-                        Discover the Latest Tech & Accessories.
-                    </h2>
-                    <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                        Upgrade your lifestyle with our curated collection of smartphones, laptops, smartwatches, and high-quality protective gear.
-                    </p>
-                    <div className="flex items-center gap-4">
-                        <Link href="/shop" className="inline-block">
-                            <button className="bg-gray-900 hover:bg-gray-800 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-gray-900/30 transition-all transform hover:-translate-y-1">
-                                Shop Deals
-                            </button>
-                        </Link>
-                    </div>
+                {/* Slider Controls */}
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex gap-2">
+                    {slides.map((_, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => setCurrentSlide(idx)}
+                            className={`h-2 rounded-full transition-all duration-300 ${currentSlide === idx ? 'bg-white w-8' : 'bg-white/50 w-2 hover:bg-white/80'}`}
+                            aria-label={`Go to slide ${idx + 1}`}
+                        />
+                    ))}
                 </div>
             </div>
         </section>

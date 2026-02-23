@@ -4,6 +4,7 @@ import RepairServices from "../components/RepairServices/RepairServices";
 import HowItWorks from "../components/HowItWorks/HowItWorks";
 import ShopCategories from "../components/ShopCategories/ShopCategories";
 import FeaturedProducts from "../components/FeaturedProducts/FeaturedProducts";
+import DiscountedParts from "../components/DiscountedParts/DiscountedParts";
 
 export default function Home() {
   return (
@@ -11,9 +12,11 @@ export default function Home() {
       <Hero />
       <TrustStats />
       <RepairServices />
-      <HowItWorks />
+
       <ShopCategories />
+      <DiscountedParts />
       <FeaturedProducts />
+      <HowItWorks />
     </>
   );
 }

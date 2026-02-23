@@ -68,7 +68,7 @@ export default function Header() {
           <Link href="/category/macbooks" className="text-gray-700 font-medium hover:text-brand-orange transition-colors">MacBooks</Link>
           <Link href="/category/accessories" className="text-gray-700 font-medium hover:text-brand-orange transition-colors">Accessories</Link>
           <Link href="/category/chargers" className="text-gray-700 font-medium hover:text-brand-orange transition-colors">Chargers</Link>
-          <Link href="/category/used-phones" className="text-gray-700 font-medium hover:text-brand-orange transition-colors">Used Phones</Link>
+          <Link href="/category/Phones" className="text-gray-700 font-medium hover:text-brand-orange transition-colors">Used Phones</Link>
           <Link href="/category/repair-tools" className="text-brand-orange font-bold hover:opacity-80 transition-opacity">Repair Tools</Link>
         </div>
       </div>

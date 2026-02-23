@@ -1,12 +1,36 @@
 import Link from 'next/link';
-import { BsPhone } from 'react-icons/bs';
+import Image from 'next/image';
 
 export default function FeaturedProducts() {
     const products = [
-        { title: "iPhone 15 Pro Max Silicon Case", price: "2,500 ৳", oldPrice: "3,000 ৳", tag: "-16%" },
-        { title: "Momax 10000mAh Power Bank", price: "3,500 ৳", oldPrice: "4,000 ৳", tag: "-12%" },
-        { title: "Anker USB-C to Lightning Cable", price: "1,299 ৳", oldPrice: "", tag: "New" },
-        { title: "WiWU Screen Protector MacBook", price: "1,200 ৳", oldPrice: "", tag: "New" },
+        {
+            title: "iPhone 15 Pro Max Silicon Case",
+            price: "2,500 ৳",
+            oldPrice: "3,000 ৳",
+            tag: "-16%",
+            imageUrl: "https://images.unsplash.com/photo-1603313011101-320f26a4f6f6?q=80&w=600" // Phone case
+        },
+        {
+            title: "Momax 10000mAh Power Bank",
+            price: "3,500 ৳",
+            oldPrice: "4,000 ৳",
+            tag: "-12%",
+            imageUrl: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?q=80&w=600" // Power bank
+        },
+        {
+            title: "Anker USB-C to Lightning Cable",
+            price: "1,299 ৳",
+            oldPrice: "",
+            tag: "New",
+            imageUrl: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?q=80&w=600" // Cables
+        },
+        {
+            title: "WiWU Screen Protector MacBook",
+            price: "1,200 ৳",
+            oldPrice: "",
+            tag: "New",
+            imageUrl: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=600" // MacBook
+        },
     ];
 
     return (
@@ -35,10 +59,15 @@ export default function FeaturedProducts() {
                                 </span>
                             </div>
 
-                            {/* Image Placeholder */}
-                            <div className="w-full bg-gray-50 aspect-square rounded-xl mb-6 flex items-center justify-center relative overflow-hidden group-hover:bg-orange-50/50 transition-colors">
-                                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity bg-brand-orange"></div>
-                                <BsPhone className="text-6xl text-gray-200 group-hover:text-brand-orange group-hover:scale-110 transition-all duration-500 relative z-10" />
+                            {/* Product Image */}
+                            <div className="w-full bg-gray-50 aspect-square rounded-xl mb-6 relative overflow-hidden group-hover:bg-orange-50/50 transition-colors">
+                                <Image
+                                    src={product.imageUrl}
+                                    alt={product.title}
+                                    fill
+                                    unoptimized
+                                    className="object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                                />
                             </div>
 
                             {/* Details */}
