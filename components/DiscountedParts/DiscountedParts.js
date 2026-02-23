@@ -61,8 +61,13 @@ export default function DiscountedParts() {
                     </div>
                 </div>
 
-                {/* Horizontal Scrollable Product List */}
-                <div className="flex overflow-x-auto gap-4 md:gap-6 hide-scrollbar pb-6 snap-x snap-mandatory">
+                {/* Horizontal Scrollable Product List with Hidden Scrollbar */}
+                <div className="flex overflow-x-auto gap-4 md:gap-6 pb-6 snap-x snap-mandatory flex-nowrap" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <style jsx>{`
+                        div::-webkit-scrollbar {
+                            display: none;
+                        }
+                    `}</style>
                     {activeProducts.map((product) => (
                         <div
                             key={product.id}
