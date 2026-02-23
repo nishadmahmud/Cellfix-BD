@@ -54,14 +54,13 @@ export default function Hero() {
     }, [slides.length]);
 
     return (
-        <section className="w-full bg-white py-4 md:py-8 px-4 md:px-6">
-            <div className="max-w-7xl mx-auto relative overflow-hidden rounded-xl h-[400px] md:h-[500px] shadow-lg border border-gray-100">
+        <section className="w-full bg-white py-2 md:py-8 px-3 md:px-6">
+            <div className="max-w-7xl mx-auto relative overflow-hidden rounded-xl h-[220px] sm:h-[320px] md:h-[500px] shadow-lg border border-gray-100">
                 {slides.map((slide, idx) => (
                     <div
                         key={slide.id}
                         className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${currentSlide === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
                     >
-                        {/* Full Width Background Image */}
                         <Image
                             src={slide.imageUrl}
                             alt={slide.title}
@@ -70,37 +69,31 @@ export default function Hero() {
                             className="object-cover object-center z-0"
                             priority={idx === 0}
                         />
-
-                        {/* Lighter Gradient Overlay - Darker on the left for text, fading to transparent on the right */}
                         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10 z-10"></div>
-
-                        {/* Left-Aligned Text Content */}
-                        <div className="relative z-20 flex flex-col items-start justify-center h-full text-left px-8 md:px-16 lg:px-24">
-                            <div className="bg-brand-orange text-white font-bold py-1 px-2 mb-3 rounded-full text-[10px] uppercase tracking-wider shadow-sm">
+                        <div className="relative z-20 flex flex-col items-start justify-center h-full text-left px-5 md:px-16 lg:px-24">
+                            <div className="bg-brand-orange text-white font-bold py-0.5 px-2 mb-2 md:mb-3 rounded-full text-[8px] md:text-[10px] uppercase tracking-wider shadow-sm">
                                 {slide.badge}
                             </div>
-                            <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-snug mb-2 drop-shadow-md max-w-lg">
+                            <h2 className="text-lg sm:text-2xl md:text-3xl font-extrabold text-white leading-snug mb-1 md:mb-2 drop-shadow-md max-w-lg">
                                 {slide.title}
                             </h2>
-                            <p className="text-xs sm:text-sm text-gray-200 mb-6 max-w-md drop-shadow leading-relaxed">
+                            <p className="text-[10px] sm:text-xs md:text-sm text-gray-200 mb-3 md:mb-6 max-w-md drop-shadow leading-relaxed">
                                 {slide.desc}
                             </p>
                             <Link href={slide.ctaLink} className="inline-block">
-                                <button className="bg-brand-orange hover:bg-orange-600 text-white font-bold text-xs py-2 px-6 rounded-md shadow hover:shadow-orange-500/40 transition-all transform hover:-translate-y-0.5">
+                                <button className="bg-brand-orange hover:bg-orange-600 text-white font-bold text-[10px] md:text-xs py-1.5 px-4 md:py-2 md:px-6 rounded-md shadow hover:shadow-orange-500/40 transition-all">
                                     {slide.ctaText}
                                 </button>
                             </Link>
                         </div>
                     </div>
                 ))}
-
-                {/* Slider Controls */}
-                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex gap-2">
+                <div className="absolute bottom-3 md:bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex gap-1.5 md:gap-2">
                     {slides.map((_, idx) => (
                         <button
                             key={idx}
                             onClick={() => setCurrentSlide(idx)}
-                            className={`h-2 rounded-full transition-all duration-300 ${currentSlide === idx ? 'bg-white w-8' : 'bg-white/50 w-2 hover:bg-white/80'}`}
+                            className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${currentSlide === idx ? 'bg-white w-5 md:w-8' : 'bg-white/50 w-1.5 md:w-2 hover:bg-white/80'}`}
                             aria-label={`Go to slide ${idx + 1}`}
                         />
                     ))}

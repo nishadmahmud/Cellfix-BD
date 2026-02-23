@@ -1,9 +1,25 @@
+"use client";
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Button from '../Button/Button';
 import { FiSmartphone, FiMonitor, FiWatch, FiHeadphones, FiShield, FiBatteryCharging, FiZap, FiRefreshCcw, FiTablet, FiSpeaker, FiCpu, FiHardDrive, FiWifi, FiPenTool, FiLayers, FiCamera } from 'react-icons/fi';
 
 export default function ShopCategories() {
+    // Countdown timer — starts at 12h 45m 06s, counts down every second
+    const [timeLeft, setTimeLeft] = useState(12 * 3600 + 45 * 60 + 6);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimeLeft((prev) => (prev <= 0 ? 24 * 3600 : prev - 1));
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const hours = String(Math.floor(timeLeft / 3600)).padStart(2, '0');
+    const minutes = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, '0');
+    const seconds = String(timeLeft % 60).padStart(2, '0');
     const categories = [
         { name: "iPhones", icon: <FiSmartphone /> },
         { name: "MacBooks", icon: <FiMonitor /> },
@@ -31,88 +47,71 @@ export default function ShopCategories() {
     ];
 
     return (
-        <section className="bg-white py-20 border-b border-gray-100">
-            <div className="max-w-7xl mx-auto px-4 md:px-6">
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-                    <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+        <section className="bg-white py-10 md:py-20 border-b border-gray-100">
+            <div className="max-w-7xl mx-auto px-3 md:px-6">
+                <div className="flex items-end justify-between mb-6 md:mb-12 gap-4">
+                    <h2 className="text-xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
                         Shop by <span className="text-brand-orange">Categories</span>
                     </h2>
-                    <Link href="/shop" className="text-sm font-bold text-gray-500 hover:text-brand-orange uppercase tracking-wider transition-colors inline-block pb-1 border-b-2 border-transparent hover:border-brand-orange">
+                    <Link href="/shop" className="text-xs md:text-sm font-bold text-gray-500 hover:text-brand-orange uppercase tracking-wider transition-colors inline-block pb-1 border-b-2 border-transparent hover:border-brand-orange">
                         See All
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-20">
+                <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-2 md:gap-4 mb-10 md:mb-20">
                     {categories.map((cat, idx) => (
                         <Link
                             href={`/category/${cat.name.toLowerCase().replace(/ /g, '-')}`}
                             key={idx}
-                            className="bg-white border border-gray-100 rounded-xl p-6 flex flex-col items-center justify-center gap-4 text-center hover:-translate-y-1 hover:border-brand-orange hover:shadow-lg hover:shadow-orange-100 transition-all duration-300 group"
+                            className="bg-white border border-gray-100 rounded-lg md:rounded-xl p-2 md:p-6 flex flex-col items-center justify-center gap-1 md:gap-4 text-center hover:-translate-y-1 hover:border-brand-orange hover:shadow-lg hover:shadow-orange-100 transition-all duration-300 group"
                         >
-                            <div className="text-4xl text-gray-400 group-hover:text-brand-orange transition-colors">
+                            <div className="text-xl md:text-4xl text-gray-400 group-hover:text-brand-orange transition-colors">
                                 {cat.icon}
                             </div>
-                            <span className="text-sm font-semibold text-gray-700">{cat.name}</span>
+                            <span className="text-[9px] md:text-sm font-semibold text-gray-700 leading-tight">{cat.name}</span>
                         </Link>
                     ))}
                 </div>
 
-                {/* Flash Sale Banner Placeholder */}
-                <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden shadow-xl">
-                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-10">
-                        <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12">
-                            <h3 className="text-3xl md:text-4xl font-extrabold whitespace-nowrapflex items-center gap-3">
-                                <span className="text-brand-orange">🔥</span> Flash Sale
-                            </h3>
-                            <div className="flex gap-3">
-                                <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg flex flex-col items-center min-w-[70px]">
-                                    <span className="text-2xl font-black leading-none mb-1">12</span>
-                                    <span className="text-[10px] uppercase font-bold text-gray-300">Hours</span>
-                                </div>
-                                <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg flex flex-col items-center min-w-[70px]">
-                                    <span className="text-2xl font-black leading-none mb-1">45</span>
-                                    <span className="text-[10px] uppercase font-bold text-gray-300">Mins</span>
-                                </div>
-                                <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg flex flex-col items-center min-w-[70px]">
-                                    <span className="text-2xl font-black leading-none mb-1">06</span>
-                                    <span className="text-[10px] uppercase font-bold text-gray-300">Secs</span>
-                                </div>
+                {/* Flash Sale Banner */}
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                    {/* Compact Header Strip */}
+                    <div className="bg-brand-orange px-3 md:px-6 py-2.5 md:py-3 flex justify-between items-center gap-2">
+                        <div className="flex items-center gap-2 md:gap-3">
+                            <span className="text-white text-sm md:text-lg">🔥</span>
+                            <h3 className="text-sm md:text-lg font-extrabold text-white">Flash Sale</h3>
+                            <div className="flex gap-1 md:gap-1.5 ml-1 md:ml-2">
+                                <span className="bg-white/20 text-white text-[10px] md:text-xs font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded">{hours}h</span>
+                                <span className="bg-white/20 text-white text-[10px] md:text-xs font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded">{minutes}m</span>
+                                <span className="bg-white/20 text-white text-[10px] md:text-xs font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded">{seconds}s</span>
                             </div>
                         </div>
-
-                        <div className="flex flex-col items-start md:items-end gap-4 text-left md:text-right">
-                            <p className="text-lg text-gray-300 font-medium">Up to <span className="text-brand-orange font-bold text-xl">50% OFF</span> on select accessories and gadgets.</p>
-                            <button className="bg-white text-gray-900 hover:bg-brand-orange hover:text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all hover:scale-105">
-                                Shop Now
-                            </button>
-                        </div>
+                        <button className="bg-white text-brand-orange hover:bg-gray-50 font-bold text-[10px] md:text-xs py-1.5 md:py-2 px-3 md:px-5 rounded-lg transition-colors whitespace-nowrap">
+                            Shop All →
+                        </button>
                     </div>
 
-                    {/* Flash Sale Products Grid */}
-                    <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-8">
+                    {/* Product Row */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-gray-100">
                         {flashSaleProducts.map((product, idx) => (
-                            <div key={idx} className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 hover:bg-white/20 transition-all cursor-pointer group flex flex-col">
-                                <div className="w-full aspect-square relative rounded-xl overflow-hidden mb-4 bg-white/5">
+                            <div key={idx} className="bg-white p-2.5 md:p-4 group cursor-pointer hover:bg-orange-50/30 transition-colors flex flex-col items-center text-center">
+                                <div className="w-full aspect-square md:aspect-[4/3] relative rounded-lg overflow-hidden mb-2 md:mb-3 bg-gray-50">
                                     <Image
                                         src={product.image}
                                         alt={product.name}
                                         fill
                                         unoptimized
-                                        className="object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                                        className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                                     />
                                 </div>
-                                <h4 className="font-bold text-white text-sm md:text-base leading-tight mb-2 line-clamp-2">{product.name}</h4>
-                                <div className="mt-auto flex items-end gap-2">
-                                    <span className="text-brand-orange font-black text-lg">{product.price}</span>
-                                    <span className="text-gray-400 text-xs line-through mb-0.5">{product.oldPrice}</span>
+                                <h4 className="font-semibold text-gray-800 text-[10px] md:text-sm leading-tight mb-1 md:mb-2 line-clamp-1">{product.name}</h4>
+                                <div className="flex items-center gap-1 md:gap-2">
+                                    <span className="text-brand-orange font-black text-xs md:text-base">{product.price}</span>
+                                    <span className="text-gray-400 text-[9px] md:text-[11px] line-through">{product.oldPrice}</span>
                                 </div>
                             </div>
                         ))}
                     </div>
-
-                    {/* Decorative bg elements */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-brand-orange/20 rounded-full blur-[80px] -mr-20 -mt-20 pointer-events-none"></div>
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-blue/20 rounded-full blur-[80px] -ml-20 -mb-20 pointer-events-none"></div>
                 </div>
 
             </div>

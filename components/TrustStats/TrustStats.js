@@ -2,20 +2,22 @@ import { MdVerifiedUser, MdOutlineEngineering, MdLocalShipping, MdShield } from 
 
 export default function TrustStats() {
     const stats = [
-        { label: "100% Genuine Products", icon: <MdVerifiedUser /> },
-        { label: "Certified Repair Specialists", icon: <MdOutlineEngineering /> },
-        { label: "Super Fast Delivery", icon: <MdLocalShipping /> },
-        { label: "Warranty on Repairs", icon: <MdShield /> }
+        { label: "100% Genuine", icon: <MdVerifiedUser />, counter: "15,000+", counterLabel: "Sold" },
+        { label: "Certified Experts", icon: <MdOutlineEngineering />, counter: "8,500+", counterLabel: "Repaired" },
+        { label: "Fast Delivery", icon: <MdLocalShipping />, counter: "4.9★", counterLabel: "Rating" },
+        { label: "Warranty", icon: <MdShield />, counter: "6 Mo", counterLabel: "Guarantee" }
     ];
 
     return (
-        <section className="bg-white py-10 border-b border-gray-100">
-            <div className="max-w-7xl mx-auto px-4 md:px-6">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <section className="bg-white py-4 md:py-10 border-b border-gray-100">
+            <div className="max-w-7xl mx-auto px-3 md:px-6">
+                <div className="grid grid-cols-4 gap-2 md:gap-6">
                     {stats.map((stat, idx) => (
-                        <div key={idx} className="flex items-center justify-center gap-4 py-4 px-6 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md hover:border-brand-orange/30 transition-all duration-300">
-                            <div className="text-3xl text-brand-orange">{stat.icon}</div>
-                            <span className="text-sm font-semibold text-gray-700">{stat.label}</span>
+                        <div key={idx} className="flex flex-col items-center justify-center gap-0.5 md:gap-2 py-3 md:py-6 px-2 md:px-4 bg-white border border-gray-100 rounded-lg md:rounded-xl shadow-sm hover:shadow-md hover:border-brand-orange/30 transition-all duration-300 text-center">
+                            <div className="text-xl md:text-3xl text-brand-orange">{stat.icon}</div>
+                            <span className="text-sm md:text-2xl font-black text-gray-900">{stat.counter}</span>
+                            <span className="text-[8px] md:text-xs font-semibold text-gray-400 uppercase tracking-wider">{stat.counterLabel}</span>
+                            <span className="text-[9px] md:text-sm font-semibold text-gray-700 hidden sm:block">{stat.label}</span>
                         </div>
                     ))}
                 </div>
