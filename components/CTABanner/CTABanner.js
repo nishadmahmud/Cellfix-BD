@@ -3,7 +3,7 @@ import { FiArrowRight, FiPhone } from 'react-icons/fi';
 
 export default function CTABanner() {
     return (
-        <section className="bg-brand-orange py-8 md:py-16">
+        <section className="bg-gray-900 py-8 md:py-16 border-b-4 border-brand-orange">
             <div className="max-w-7xl mx-auto px-3 md:px-6">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8">
                     <div className="text-center md:text-left">

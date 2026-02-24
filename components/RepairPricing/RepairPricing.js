@@ -43,27 +43,25 @@ export default function RepairPricing() {
     const activePricing = pricingData[activeDevice];
 
     return (
-        <section className="bg-gray-50 py-10 md:py-20 border-b border-gray-100">
-            <div className="max-w-7xl mx-auto px-3 md:px-6">
-                <div className="text-center mb-6 md:mb-12">
-                    <h2 className="text-xl md:text-4xl font-extrabold text-gray-900 mb-2 md:mb-4 tracking-tight">
-                        Repair <span className="text-brand-orange">Pricing</span>
+        <section className="bg-gray-900 py-16 md:py-28 border-b border-gray-100">
+            <div className="max-w-6xl mx-auto px-4 md:px-6">
+                <div className="text-center mb-12 md:mb-20">
+                    <span className="text-brand-orange uppercase tracking-[0.2em] text-xs font-bold mb-4 block">Transparent Service</span>
+                    <h2 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight">
+                        Repair <span className="text-gray-400 font-light italic">Menu</span>
                     </h2>
-                    <p className="text-sm md:text-lg text-gray-500 max-w-2xl mx-auto">
-                        Transparent pricing. No hidden fees.
-                    </p>
                 </div>
 
-                {/* Device Tabs */}
-                <div className="flex justify-center mb-6 md:mb-10">
-                    <div className="inline-flex bg-white rounded-lg md:rounded-xl p-1 md:p-1.5 shadow-sm border border-gray-100">
+                {/* Elegant Tabs */}
+                <div className="flex justify-center mb-12 md:mb-16">
+                    <div className="flex gap-2">
                         {devices.map((device) => (
                             <button
                                 key={device}
                                 onClick={() => setActiveDevice(device)}
-                                className={`px-4 md:px-6 py-2 md:py-2.5 text-xs md:text-sm font-bold rounded-md md:rounded-lg transition-all duration-200 ${activeDevice === device
-                                        ? 'bg-brand-orange text-white shadow-md shadow-orange-200'
-                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                className={`px-6 py-2 md:py-3 text-xs md:text-sm font-bold uppercase tracking-widest transition-all duration-300 border-b-2 ${activeDevice === device
+                                        ? 'border-brand-orange text-white'
+                                        : 'border-transparent text-gray-500 hover:text-gray-300'
                                     }`}
                             >
                                 {device}
@@ -72,39 +70,32 @@ export default function RepairPricing() {
                     </div>
                 </div>
 
-                {/* Pricing Table */}
-                <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">
-                    <table className="w-full min-w-[400px]">
-                        <thead>
-                            <tr className="bg-gray-900 text-white text-[10px] md:text-sm font-bold uppercase tracking-wider">
-                                <th className="px-3 md:px-6 py-3 md:py-4 text-left">Model</th>
-                                <th className="px-3 md:px-6 py-3 md:py-4 text-center">Screen</th>
-                                <th className="px-3 md:px-6 py-3 md:py-4 text-center">Battery</th>
-                                <th className="px-3 md:px-6 py-3 md:py-4 text-center">Back Glass</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {activePricing.map((item, idx) => (
-                                <tr
-                                    key={idx}
-                                    className={`text-xs md:text-base border-b border-gray-50 hover:bg-orange-50/50 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
-                                        }`}
-                                >
-                                    <td className="px-3 md:px-6 py-2.5 md:py-4 font-semibold text-gray-900">{item.model}</td>
-                                    <td className="px-3 md:px-6 py-2.5 md:py-4 text-center font-bold text-brand-orange">৳{item.screen}</td>
-                                    <td className="px-3 md:px-6 py-2.5 md:py-4 text-center font-bold text-gray-700">৳{item.battery}</td>
-                                    <td className="px-3 md:px-6 py-2.5 md:py-4 text-center font-bold text-gray-700">
-                                        {item.backGlass === "—" ? "—" : `৳${item.backGlass}`}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                {/* Editorial Pricing Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-4 md:gap-y-6">
+                    {activePricing.map((item, idx) => (
+                        <div key={idx} className="flex flex-col py-4 border-b border-gray-800">
+                            <div className="flex justify-between items-end mb-2">
+                                <h3 className="text-lg md:text-xl font-bold text-white tracking-tight">{item.model}</h3>
+                                <div className="flex-grow border-b border-dotted border-gray-700 mx-4 mb-2"></div>
+                                <span className="text-brand-orange font-bold text-lg md:text-xl">৳{item.screen} <span className="text-[10px] md:text-xs text-gray-500 font-normal ml-1">Screen</span></span>
+                            </div>
+
+                            <div className="flex items-center gap-4 text-xs md:text-sm text-gray-400 font-medium tracking-wide">
+                                <span>Battery: <span className="text-gray-300">৳{item.battery}</span></span>
+                                {item.backGlass !== "—" && (
+                                    <>
+                                        <span className="w-1 h-1 bg-gray-700 rounded-full"></span>
+                                        <span>Back Glass: <span className="text-gray-300">৳{item.backGlass}</span></span>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
-                <div className="mt-4 md:mt-8 text-center">
-                    <p className="text-[10px] md:text-sm text-gray-400">
-                        * Prices may vary. Contact us for an exact quote.
+                <div className="mt-12 md:mt-20 text-center">
+                    <p className="text-[10px] md:text-sm text-gray-500 italic">
+                        All repairs include premium parts, labor, and a 3-month comprehensive warranty guarantee.
                     </p>
                 </div>
             </div>
