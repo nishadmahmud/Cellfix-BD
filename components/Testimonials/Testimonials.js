@@ -13,39 +13,82 @@ export default function Testimonials() {
     ];
 
     return (
-        <section className="bg-white py-10 md:py-20 border-b border-gray-100">
-            <div className="max-w-7xl mx-auto px-3 md:px-6">
-                <div className="text-center mb-6 md:mb-14">
-                    <h2 className="text-xl md:text-4xl font-extrabold text-gray-900 mb-2 md:mb-4 tracking-tight">
-                        What Our <span className="text-brand-orange">Customers</span> Say
-                    </h2>
-                    <p className="text-sm md:text-lg text-gray-500 max-w-2xl mx-auto hidden sm:block">
-                        Trusted by thousands of customers across Bangladesh.
-                    </p>
-                </div>
+        <section className="bg-[#fbfcfa] py-16 md:py-28 text-gray-900 border-b border-gray-100 relative">
+            <div className="max-w-7xl mx-auto px-4 md:px-6">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-20">
 
-                {/* Horizontal scroll on mobile, grid on desktop */}
-                <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-3 md:gap-8 pb-2 md:pb-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                    <style jsx>{`div::-webkit-scrollbar { display: none; }`}</style>
-                    {reviews.map((review) => (
-                        <div key={review.id} className="bg-white rounded-xl md:rounded-2xl border border-gray-100 p-4 md:p-8 shadow-sm hover:shadow-lg hover:border-brand-orange/20 transition-all duration-300 flex flex-col min-w-[240px] md:min-w-0 flex-shrink-0">
-                            <div className="flex gap-0.5 mb-2 md:mb-4">
-                                {[...Array(5)].map((_, i) => (
-                                    <FaStar key={i} className={`text-[10px] md:text-sm ${i < review.rating ? 'text-yellow-400' : 'text-gray-200'}`} />
-                                ))}
-                            </div>
-                            <p className="text-gray-600 text-[11px] md:text-sm leading-relaxed mb-3 md:mb-6 flex-grow line-clamp-3">"{review.text}"</p>
-                            <div className="flex items-center gap-2 md:gap-3 mt-auto pt-3 md:pt-4 border-t border-gray-50">
-                                <div className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold text-[10px] md:text-sm">{review.avatar}</div>
-                                <div>
-                                    <h4 className="text-[11px] md:text-sm font-bold text-gray-900">{review.name}</h4>
-                                    <p className="text-[9px] md:text-xs text-gray-400">{review.role}</p>
+                    {/* Left Intro Section - Sticky */}
+                    <div className="lg:w-1/3 lg:sticky lg:top-32 h-fit mb-4 lg:mb-0">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-black tracking-tight mb-6 leading-[1.05] text-gray-900">
+                            Don't just take our word for it.
+                        </h2>
+                        <p className="text-base md:text-lg text-gray-500 mb-8 leading-relaxed font-medium">
+                            We've built our reputation on trust, premium repairs, and genuine products. Here's what our community has to say.
+                        </p>
+
+                        {/* Rating Block */}
+                        <div className="flex items-center gap-5 p-5 bg-white rounded-2xl border border-gray-200 shadow-[0_2px_10px_rgb(0,0,0,0.02)] max-w-sm">
+                            <div className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter">4.9</div>
+                            <div className="flex flex-col justify-center">
+                                <div className="flex gap-1 text-brand-orange text-sm md:text-base mb-1">
+                                    <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
                                 </div>
+                                <span className="text-xs md:text-sm font-semibold text-gray-500">Based on 2,500+ reviews</span>
                             </div>
                         </div>
-                    ))}
+                    </div>
+
+                    {/* Mobile Horizontal Scroll Layout (Visible only on mobile) */}
+                    <div className="sm:hidden flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory mt-6 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        <style jsx>{`div::-webkit-scrollbar { display: none; }`}</style>
+                        {reviews.map((review) => (
+                            <div key={review.id} className="snap-start min-w-[280px] w-[85vw] flex-shrink-0 flex h-full">
+                                <ReviewCard review={review} />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Desktop/Tablet Masonry Layout (Hidden on mobile) */}
+                    <div className="hidden sm:grid sm:grid-cols-2 gap-4 md:gap-6 lg:mt-0 lg:w-2/3">
+                        {/* Column 1 */}
+                        <div className="flex flex-col gap-4 md:gap-6">
+                            {reviews.filter((_, i) => i % 2 === 0).map((review) => (
+                                <ReviewCard key={review.id} review={review} />
+                            ))}
+                        </div>
+                        {/* Column 2 - Staggered */}
+                        <div className="flex flex-col gap-4 md:gap-6 sm:mt-12">
+                            {reviews.filter((_, i) => i % 2 !== 0).map((review) => (
+                                <ReviewCard key={review.id} review={review} />
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
+    );
+}
+
+function ReviewCard({ review }) {
+    return (
+        <div className="bg-white rounded-[24px] p-6 md:p-8 border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-brand-orange/30 transition-all duration-300 flex flex-col items-start text-left group">
+            <div className="flex gap-1 mb-5">
+                {[...Array(5)].map((_, i) => (
+                    <FaStar key={i} className={`text-[12px] md:text-[14px] ${i < review.rating ? 'text-brand-orange' : 'text-gray-200'}`} />
+                ))}
+            </div>
+            <p className="text-gray-800 text-sm md:text-[15px] leading-relaxed mb-8 font-medium">
+                "{review.text}"
+            </p>
+            <div className="flex items-center gap-4 mt-auto w-full pt-5 border-t border-gray-50">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#fdf3eb] flex items-center justify-center text-brand-orange font-bold text-sm md:text-lg border border-orange-100 shadow-sm">
+                    {review.avatar}
+                </div>
+                <div>
+                    <h4 className="text-sm md:text-[15px] font-bold text-gray-900 leading-none mb-1.5">{review.name}</h4>
+                    <p className="text-[10px] md:text-xs font-bold text-gray-400 tracking-wider uppercase leading-none">{review.role}</p>
+                </div>
+            </div>
+        </div>
     );
 }
