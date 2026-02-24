@@ -43,11 +43,11 @@ export default function RepairPricing() {
     const activePricing = pricingData[activeDevice];
 
     return (
-        <section className="bg-gray-900 py-16 md:py-28 border-b border-gray-100">
+        <section className="bg-gray-50 py-16 md:py-28 border-b border-gray-100">
             <div className="max-w-6xl mx-auto px-4 md:px-6">
                 <div className="text-center mb-12 md:mb-20">
                     <span className="text-brand-orange uppercase tracking-[0.2em] text-xs font-bold mb-4 block">Transparent Service</span>
-                    <h2 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight">
+                    <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">
                         Repair <span className="text-gray-400 font-light italic">Menu</span>
                     </h2>
                 </div>
@@ -60,8 +60,8 @@ export default function RepairPricing() {
                                 key={device}
                                 onClick={() => setActiveDevice(device)}
                                 className={`px-6 py-2 md:py-3 text-xs md:text-sm font-bold uppercase tracking-widest transition-all duration-300 border-b-2 ${activeDevice === device
-                                        ? 'border-brand-orange text-white'
-                                        : 'border-transparent text-gray-500 hover:text-gray-300'
+                                        ? 'border-brand-orange text-gray-900'
+                                        : 'border-transparent text-gray-400 hover:text-gray-900'
                                     }`}
                             >
                                 {device}
@@ -73,19 +73,19 @@ export default function RepairPricing() {
                 {/* Editorial Pricing Layout */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-4 md:gap-y-6">
                     {activePricing.map((item, idx) => (
-                        <div key={idx} className="flex flex-col py-4 border-b border-gray-800">
+                        <div key={idx} className="flex flex-col py-4 border-b border-gray-200">
                             <div className="flex justify-between items-end mb-2">
-                                <h3 className="text-lg md:text-xl font-bold text-white tracking-tight">{item.model}</h3>
-                                <div className="flex-grow border-b border-dotted border-gray-700 mx-4 mb-2"></div>
-                                <span className="text-brand-orange font-bold text-lg md:text-xl">৳{item.screen} <span className="text-[10px] md:text-xs text-gray-500 font-normal ml-1">Screen</span></span>
+                                <h3 className="text-lg md:text-xl font-bold text-gray-900 tracking-tight">{item.model}</h3>
+                                <div className="flex-grow border-b border-dotted border-gray-300 mx-4 mb-2"></div>
+                                <span className="text-brand-orange font-bold text-lg md:text-xl">৳{item.screen} <span className="text-[10px] md:text-xs text-gray-400 font-normal ml-1">Screen</span></span>
                             </div>
 
-                            <div className="flex items-center gap-4 text-xs md:text-sm text-gray-400 font-medium tracking-wide">
-                                <span>Battery: <span className="text-gray-300">৳{item.battery}</span></span>
+                            <div className="flex items-center gap-4 text-xs md:text-sm text-gray-500 font-medium tracking-wide">
+                                <span>Battery: <span className="text-gray-900">৳{item.battery}</span></span>
                                 {item.backGlass !== "—" && (
                                     <>
-                                        <span className="w-1 h-1 bg-gray-700 rounded-full"></span>
-                                        <span>Back Glass: <span className="text-gray-300">৳{item.backGlass}</span></span>
+                                        <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                        <span>Back Glass: <span className="text-gray-900">৳{item.backGlass}</span></span>
                                     </>
                                 )}
                             </div>
