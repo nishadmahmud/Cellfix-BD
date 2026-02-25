@@ -28,21 +28,21 @@ export default function CategoryPage() {
             <div className="max-w-7xl mx-auto px-4 md:px-6">
 
                 {/* Page Header */}
-                <div className="mb-4 md:mb-8 pb-4 md:pb-6 border-b border-gray-200">
-                    <div className="text-[11px] md:text-sm text-gray-400 mb-2 flex items-center gap-2">
+                <div className="mb-3 md:mb-8 pb-3 md:pb-6 border-b border-gray-200">
+                    <div className="text-[11px] md:text-sm text-gray-400 mb-1 flex items-center gap-2">
                         <span>Home</span> / <span>Categories</span> / <span className="text-brand-orange font-semibold capitalize">{categoryName}</span>
                     </div>
                     <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-4">
-                        <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 capitalize tracking-tight">
+                        <h1 className="text-xl md:text-4xl font-extrabold text-gray-900 capitalize tracking-tight">
                             {categoryName}
                         </h1>
-                        <p className="text-gray-500 text-[13px] md:text-sm font-medium">
+                        <p className="text-gray-500 text-[12px] md:text-sm font-medium">
                             Showing <span className="font-bold text-gray-900">{products.length}</span> products
                         </p>
                     </div>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-8">
+                <div className="flex flex-col lg:flex-row gap-0 lg:gap-8 pt-2 lg:pt-0">
 
                     {/* Sidebar (Filters) - Left Side on Desktop */}
                     <aside className="lg:w-1/4 order-1">
