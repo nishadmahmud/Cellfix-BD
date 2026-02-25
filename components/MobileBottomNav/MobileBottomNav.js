@@ -3,14 +3,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FiHome, FiShoppingCart, FiGrid, FiUser } from 'react-icons/fi';
+import { useCart } from '../../context/CartContext';
 
 export default function MobileBottomNav() {
     const pathname = usePathname();
+    const { cartCount, openCart } = useCart();
 
     const navItems = [
         { name: 'Home', href: '/', icon: FiHome },
-        { name: 'Cart', href: '/cart', icon: FiShoppingCart, badge: 0 },
-        { name: 'Categories', href: '/categories', icon: FiGrid },
+        { name: 'Cart', href: '#', icon: FiShoppingCart, isCartToggle: true },
+        { name: 'Categories', href: '/category', icon: FiGrid },
         { name: 'Login', href: '/profile', icon: FiUser },
     ];
 
@@ -29,18 +31,26 @@ export default function MobileBottomNav() {
                     const isActive = pathname === item.href;
                     const Icon = item.icon;
 
+                    const isCartItem = item.isCartToggle;
+
                     return (
                         <Link
                             key={item.name}
                             href={item.href}
+                            onClick={(e) => {
+                                if (isCartItem) {
+                                    e.preventDefault();
+                                    openCart();
+                                }
+                            }}
                             className={`flex flex-col items-center justify-center w-full gap-1.5 transition-colors ${isActive ? 'text-brand-orange' : 'text-white hover:text-gray-300'
                                 }`}
                         >
                             <div className="relative">
-                                <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-                                {item.badge !== undefined && (
+                                <Icon size={20} className={isCartItem && cartCount > 0 ? "text-brand-orange" : ""} strokeWidth={isActive ? 2.5 : 2} />
+                                {isCartItem && cartCount > 0 && (
                                     <span className="absolute -top-2 -right-2 bg-brand-orange text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-gray-900">
-                                        {item.badge}
+                                        {cartCount}
                                     </span>
                                 )}
                             </div>

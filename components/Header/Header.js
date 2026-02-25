@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FiSearch, FiUser, FiShoppingCart, FiPhone, FiMapPin, FiMenu, FiX, FiMic, FiChevronRight, FiGrid } from 'react-icons/fi';
+import { useCart } from '../../context/CartContext';
 
 export default function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { cartCount, openCart } = useCart();
 
   // Close sidebar on navigation (using simple onClick for links)
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -64,11 +66,13 @@ export default function Header() {
               <button className="text-white hover:text-white/80 transition-colors p-1" aria-label="Account">
                 <FiUser size={22} />
               </button>
-              <button className="text-white hover:text-white/80 transition-colors relative p-1" aria-label="Cart">
+              <button onClick={openCart} className="text-white hover:text-white/80 transition-colors relative p-1" aria-label="Cart">
                 <FiShoppingCart size={22} />
-                <span className="absolute -top-1 -right-1 bg-white text-brand-orange text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm">
-                  0
-                </span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-white text-brand-orange text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm">
+                    {cartCount}
+                  </span>
+                )}
               </button>
             </div>
 
@@ -122,13 +126,15 @@ export default function Header() {
             <FiUser size={20} />
             <span className="text-xs font-bold">Profile</span>
           </Link>
-          <Link href="/cart" onClick={closeSidebar} className="flex-1 py-4 flex flex-col items-center justify-center gap-2 text-gray-600 hover:text-brand-orange hover:bg-orange-50/50 transition-colors relative">
+          <button onClick={() => { closeSidebar(); openCart(); }} className="flex-1 py-4 flex flex-col items-center justify-center gap-2 text-gray-600 hover:text-brand-orange hover:bg-orange-50/50 transition-colors relative border-none">
             <div className="relative">
               <FiShoppingCart size={20} />
-              <span className="absolute -top-2 -right-2 bg-brand-orange text-white text-[8px] font-bold h-3.5 w-3.5 rounded-full flex items-center justify-center">0</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-brand-orange text-white text-[8px] font-bold h-3.5 w-3.5 rounded-full flex items-center justify-center">{cartCount}</span>
+              )}
             </div>
             <span className="text-xs font-bold">Cart</span>
-          </Link>
+          </button>
         </div>
 
         {/* Sidebar Links */}

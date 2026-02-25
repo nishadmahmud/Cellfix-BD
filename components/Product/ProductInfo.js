@@ -3,12 +3,24 @@
 import { useState } from 'react';
 import { FiShare2, FiMinus, FiPlus } from 'react-icons/fi';
 import { FaStar } from 'react-icons/fa';
+import { useCart } from '../../context/CartContext';
 
 export default function ProductInfo({ product }) {
     const [quantity, setQuantity] = useState(1);
     const [selectedStorage, setSelectedStorage] = useState(product.variants?.storage?.[0]);
     const [selectedColor, setSelectedColor] = useState(product.variants?.colors?.[0]);
     const [selectedRegion, setSelectedRegion] = useState(product.variants?.regions?.[0]);
+
+    const { addToCart } = useCart();
+
+    const handleAddToCart = () => {
+        const variants = {};
+        if (selectedStorage) variants.storage = selectedStorage;
+        if (selectedColor) variants.colors = selectedColor;
+        if (selectedRegion) variants.region = selectedRegion;
+
+        addToCart(product, quantity, Object.keys(variants).length > 0 ? variants : null);
+    };
 
     return (
         <div className="flex flex-col">
@@ -144,11 +156,17 @@ export default function ProductInfo({ product }) {
                     </button>
                 </div>
 
-                <button className="cursor-pointer flex-1 bg-white border-2 border-gray-900 text-gray-900 font-bold py-3 px-2 rounded-lg hover:bg-gray-50 transition-colors text-sm whitespace-nowrap">
+                <button
+                    onClick={handleAddToCart}
+                    className="cursor-pointer flex-1 bg-white border-2 border-gray-900 text-gray-900 font-bold py-3 px-2 rounded-lg hover:bg-gray-50 transition-colors text-sm whitespace-nowrap"
+                >
                     Add to Cart
                 </button>
 
-                <button className="cursor-pointer flex-[1.5] bg-brand-orange text-white font-bold py-3 px-2 rounded-lg hover:bg-[#ff1a2b] shadow-lg shadow-brand-orange/30 transition-all text-sm whitespace-nowrap">
+                <button
+                    onClick={handleAddToCart}
+                    className="cursor-pointer flex-[1.5] bg-brand-orange text-white font-bold py-3 px-2 rounded-lg hover:bg-[#ff1a2b] shadow-lg shadow-brand-orange/30 transition-all text-sm whitespace-nowrap"
+                >
                     Buy Now
                 </button>
             </div>
