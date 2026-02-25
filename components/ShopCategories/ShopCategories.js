@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FiSmartphone, FiMonitor, FiHeadphones, FiZap, FiBatteryCharging, FiTablet, FiSpeaker, FiCpu, FiHardDrive, FiWifi, FiPenTool, FiWatch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import ProductCard from '../Shared/ProductCard';
 
 export default function ShopCategories() {
     // Countdown timer — starts at 23 Days 4h 4m 59s
@@ -42,11 +43,11 @@ export default function ShopCategories() {
     ];
 
     const flashSaleProducts = [
-        { name: "Anker Zolo 20W PD 3.0...", price: "৳ 1,250", oldPrice: "৳ 1,499", discount: "16%", tag: "Hot Product", image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?q=80&w=600" },
-        { name: "iPhone 17 Pro Max", price: "৳ 1,68,490", oldPrice: "৳ 2,14,990", discount: "21%", tag: "Hot Product", image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=600" },
-        { name: "Mibro Earbuds 5", price: "৳ 1,192", oldPrice: "৳ 1,900", discount: "37%", tag: "Top Selling", image: "https://images.unsplash.com/photo-1590658268037-6f14016628c0?q=80&w=600" },
-        { name: "iPhone 17", price: "৳ 1,12,990", oldPrice: "৳ 1,49,990", discount: "24%", tag: "Hot Product", image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=600" },
-        { name: "iPhone 17 Pro", price: "৳ 1,52,990", oldPrice: "৳ 2,39,990", discount: "36%", tag: "Hot Product", image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=600" },
+        { id: 101, name: "Anker Zolo 20W PD 3.0...", price: "৳ 1,250", oldPrice: "৳ 1,499", discount: "-16%", imageUrl: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?q=80&w=600" },
+        { id: 102, name: "iPhone 17 Pro Max", price: "৳ 1,68,490", oldPrice: "৳ 2,14,990", discount: "-21%", imageUrl: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=600" },
+        { id: 103, name: "Mibro Earbuds 5", price: "৳ 1,192", oldPrice: "৳ 1,900", discount: "-37%", imageUrl: "https://images.unsplash.com/photo-1590658268037-6f14016628c0?q=80&w=600" },
+        { id: 104, name: "iPhone 17", price: "৳ 1,12,990", oldPrice: "৳ 1,49,990", discount: "-24%", imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=600" },
+        { id: 105, name: "iPhone 17 Pro", price: "৳ 1,52,990", oldPrice: "৳ 2,39,990", discount: "-36%", imageUrl: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=600" },
     ];
 
     return (
@@ -121,50 +122,8 @@ export default function ShopCategories() {
                         </button>
 
                         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 overflow-hidden">
-                            {flashSaleProducts.map((product, idx) => (
-                                <div key={idx} className="bg-white rounded-xl p-3 md:p-4 group cursor-pointer hover:shadow-xl transition-all duration-300 flex flex-col relative overflow-hidden">
-                                    {/* Badges */}
-                                    <div className="absolute top-0 left-0 bg-[#b6865d] text-white text-[10px] font-bold px-2 py-1 rounded-br-lg z-10">
-                                        {product.discount}
-                                    </div>
-                                    <div className="absolute top-0 right-0 bg-[#b6865d] text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg z-10 flex items-center gap-1">
-                                        <span className="text-[10px] text-yellow-300">🔥</span> {product.tag}
-                                    </div>
-
-                                    {/* Image */}
-                                    <div className="w-full aspect-[4/3] relative mb-4 flex items-center justify-center bg-white mt-6">
-                                        <Image
-                                            src={product.image}
-                                            alt={product.name}
-                                            fill
-                                            unoptimized
-                                            className="object-contain group-hover:scale-105 transition-transform duration-500 Mix-blend-multiply px-2"
-                                        />
-                                        {/* Guarantee Badge */}
-                                        <div className="absolute bottom-0 left-0 bg-white/90 backdrop-blur-sm px-1 py-1 rounded-sm shadow-sm flex items-center gap-1 border border-orange-100">
-                                            <div className="font-extrabold text-[#b6865d] text-sm">1</div>
-                                            <div className="flex flex-col leading-[0.8] text-[6px] font-bold text-[#b6865d]">
-                                                <span>YEAR</span>
-                                                <span>GUARANTEE</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Details */}
-                                    <div className="flex flex-col flex-grow text-center">
-                                        <h4 className="font-semibold text-gray-800 text-[11px] md:text-[13px] leading-snug mb-2 line-clamp-2 h-[32px]">{product.name}</h4>
-                                        <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-4 mt-auto">
-                                            <span className="text-gray-900 font-black text-sm md:text-[15px]">{product.price}</span>
-                                            <span className="text-gray-400 text-[10px] line-through font-medium">{product.oldPrice}</span>
-                                        </div>
-
-                                        {/* Action Buttons */}
-                                        <div className="grid grid-cols-2 gap-1.5 md:gap-2 mt-auto">
-                                            <button className="bg-gray-900 text-white text-[9px] md:text-[10px] font-bold py-2 rounded-[4px] hover:bg-gray-800 transition">VIEW</button>
-                                            <button className="bg-[#fcfaf8] text-gray-900 text-[9px] md:text-[10px] font-bold py-2 rounded-[4px] border border-[#e8dccb] hover:bg-[#e8dccb] transition">ADD TO CART</button>
-                                        </div>
-                                    </div>
-                                </div>
+                            {flashSaleProducts.map((product) => (
+                                <ProductCard key={product.id} product={product} />
                             ))}
                         </div>
 

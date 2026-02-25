@@ -1,7 +1,7 @@
 "use client";
 
-import Image from 'next/image';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import ProductCard from '../Shared/ProductCard';
 
 export default function NewArrivals() {
     const products = [
@@ -47,48 +47,7 @@ export default function NewArrivals() {
                 {/* Product Cards Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
                     {products.map((product) => (
-                        <div
-                            key={product.id}
-                            className="bg-white border border-gray-100 rounded-xl md:rounded-2xl p-4 flex flex-col hover:border-brand-orange/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 cursor-pointer group group"
-                        >
-                            {/* Product Image */}
-                            <div className="w-full aspect-square relative mb-4 flex items-center justify-center p-2 md:p-4 bg-white">
-                                <Image
-                                    src={product.imageUrl}
-                                    alt={product.name}
-                                    fill
-                                    unoptimized
-                                    className="object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
-                                />
-                            </div>
-
-                            {/* Product Details */}
-                            <div className="flex flex-col flex-grow text-left">
-                                <h3 className="text-gray-900 font-bold text-xs md:text-[15px] leading-snug mb-3 line-clamp-2">
-                                    {product.name}
-                                </h3>
-
-                                <div className="mt-auto">
-                                    <span className="block text-gray-900 font-extrabold text-sm md:text-lg mb-1">
-                                        {product.price}
-                                    </span>
-
-                                    {/* Discount Row */}
-                                    <div className="flex items-center gap-2 min-h-[20px]">
-                                        {product.oldPrice && (
-                                            <span className="text-[10px] md:text-xs text-gray-400 font-medium line-through">
-                                                {product.oldPrice}
-                                            </span>
-                                        )}
-                                        {product.discount && (
-                                            <span className="text-[9px] md:text-[10px] font-bold text-green-500 bg-green-50 px-2.5 py-0.5 rounded-md tracking-wide">
-                                                {product.discount} OFF
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <ProductCard key={product.id} product={product} />
                     ))}
                 </div>
             </div>
