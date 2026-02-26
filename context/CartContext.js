@@ -7,6 +7,7 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
     const [cartItems, setCartItems] = useState([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [deliveryFee, setDeliveryFee] = useState(0);
 
     // Load cart from localStorage on mount
     useEffect(() => {
@@ -95,6 +96,9 @@ export function CartProvider({ children }) {
         0
     );
 
+    const getSubtotal = () => cartTotal;
+    const updateDeliveryFee = (fee) => setDeliveryFee(fee);
+
     return (
         <CartContext.Provider
             value={{
@@ -109,6 +113,9 @@ export function CartProvider({ children }) {
                 closeCart,
                 cartCount,
                 cartTotal,
+                getSubtotal,
+                deliveryFee,
+                updateDeliveryFee,
             }}
         >
             {children}

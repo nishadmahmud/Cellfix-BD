@@ -96,6 +96,7 @@ export default function CartSidebar() {
                                                 src={item.images?.[0] || item.imageUrl || "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=400"}
                                                 alt={item.name}
                                                 fill
+                                                unoptimized
                                                 className="object-cover"
                                             />
                                         </div>
