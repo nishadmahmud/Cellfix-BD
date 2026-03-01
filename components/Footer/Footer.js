@@ -60,23 +60,17 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Newsletter */}
+                    {/* Company Links */}
                     <div className="flex flex-col gap-3 md:gap-6 col-span-2 sm:col-span-1">
-                        <h3 className="text-sm md:text-lg font-bold text-white">Stay Updated</h3>
-                        <p className="text-[10px] md:text-sm text-white/80">Subscribe for special offers and deals.</p>
-                        <form className="flex flex-col gap-2 md:gap-3 relative" onSubmit={(e) => e.preventDefault()}>
-                            <div className="relative">
-                                <input
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    required
-                                    className="w-full bg-white/10 border border-white/20 text-white placeholder-white/50 rounded-lg py-2 md:py-3 px-3 md:px-4 outline-none focus:border-white focus:ring-2 focus:ring-white/20 transition-all text-[10px] md:text-sm"
-                                />
-                                <button type="submit" className="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2 bg-white text-brand-orange font-bold text-[10px] md:text-sm px-3 md:px-4 py-1 md:py-1.5 rounded-md hover:bg-gray-50 transition-colors">
-                                    Join
-                                </button>
-                            </div>
-                        </form>
+                        <h3 className="text-sm md:text-lg font-bold text-white">Company</h3>
+                        <div className="flex flex-col gap-1.5 md:gap-3 text-[10px] md:text-sm">
+                            <Link href="/about" className="hover:text-white/70 transition-colors">About Us</Link>
+                            <Link href="/contact" className="hover:text-white/70 transition-colors">Contact Us</Link>
+                            <Link href="/track-order" className="text-white font-semibold hover:text-white/70 transition-colors">Track Order</Link>
+                            <Link href="/privacy" className="hover:text-white/70 transition-colors">Privacy Policy</Link>
+                            <Link href="/terms" className="hover:text-white/70 transition-colors">Terms & Conditions</Link>
+                            <Link href="/refund" className="hover:text-white/70 transition-colors">Refund Policy</Link>
+                        </div>
                     </div>
 
                 </div>

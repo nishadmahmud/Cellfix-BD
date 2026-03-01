@@ -2,12 +2,25 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { FiSearch, FiUser, FiShoppingCart, FiPhone, FiMapPin, FiMenu, FiX, FiMic, FiChevronRight, FiGrid } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { cartCount, openCart } = useCart();
+  const { user, openAuthModal } = useAuth();
+  const router = useRouter();
+
+  const handleUserClick = () => {
+    if (user) {
+      router.push('/profile');
+    } else {
+      openAuthModal('login');
+    }
+  };
 
   // Close sidebar on navigation (using simple onClick for links)
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -24,6 +37,7 @@ export default function Header() {
               <span className="flex items-center gap-2"><FiMapPin className="text-brand-orange" /> Level-4, Block-C, Shop #35A, Jamuna Future Park, Dhaka</span>
             </div>
             <div className="flex gap-4 font-medium">
+              <Link href="/track-order" className="text-brand-orange font-bold hover:text-orange-300 transition-colors">Track Order</Link>
               <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
             </div>
@@ -63,8 +77,18 @@ export default function Header() {
 
             {/* Desktop Action Icons */}
             <div className="hidden md:flex gap-4 items-center">
-              <button className="text-white hover:text-white/80 transition-colors p-1" aria-label="Account">
-                <FiUser size={22} />
+              <button onClick={handleUserClick} className="text-white hover:text-white/80 transition-colors p-1" aria-label="Account">
+                {user?.image ? (
+                  <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-white/50">
+                    <Image src={user.image} alt="Profile" width={28} height={28} className="w-full h-full object-cover" unoptimized />
+                  </div>
+                ) : user ? (
+                  <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold text-white ring-2 ring-white/50">
+                    {(user.first_name || user.name || 'U').charAt(0).toUpperCase()}
+                  </div>
+                ) : (
+                  <FiUser size={22} />
+                )}
               </button>
               <button onClick={openCart} className="text-white hover:text-white/80 transition-colors relative p-1" aria-label="Cart">
                 <FiShoppingCart size={22} />
@@ -122,10 +146,20 @@ export default function Header() {
 
         {/* Sidebar Quick Actions */}
         <div className="flex border-b border-gray-100">
-          <Link href="/profile" onClick={closeSidebar} className="flex-1 py-4 flex flex-col items-center justify-center gap-2 border-r border-gray-100 text-gray-600 hover:text-brand-orange hover:bg-orange-50/50 transition-colors">
-            <FiUser size={20} />
-            <span className="text-xs font-bold">Profile</span>
-          </Link>
+          <button onClick={() => { closeSidebar(); handleUserClick(); }} className="flex-1 py-4 flex flex-col items-center justify-center gap-2 border-r border-gray-100 text-gray-600 hover:text-brand-orange hover:bg-orange-50/50 transition-colors">
+            {user?.image ? (
+              <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-brand-orange/40">
+                <Image src={user.image} alt="Profile" width={28} height={28} className="w-full h-full object-cover" unoptimized />
+              </div>
+            ) : user ? (
+              <div className="w-7 h-7 rounded-full bg-brand-orange/10 flex items-center justify-center text-xs font-bold text-brand-orange ring-2 ring-brand-orange/30">
+                {(user.first_name || user.name || 'U').charAt(0).toUpperCase()}
+              </div>
+            ) : (
+              <FiUser size={20} />
+            )}
+            <span className="text-xs font-bold">{user ? 'Profile' : 'Login'}</span>
+          </button>
           <button onClick={() => { closeSidebar(); openCart(); }} className="flex-1 py-4 flex flex-col items-center justify-center gap-2 text-gray-600 hover:text-brand-orange hover:bg-orange-50/50 transition-colors relative border-none">
             <div className="relative">
               <FiShoppingCart size={20} />
@@ -148,6 +182,9 @@ export default function Header() {
           </Link>
           <Link href="/shop" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 text-gray-700 font-semibold border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
             <span>Shop Gadgets</span><FiChevronRight size={16} className="text-gray-400" />
+          </Link>
+          <Link href="/track-order" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 font-semibold border-b border-gray-50 text-brand-orange bg-orange-50/50 hover:bg-orange-50">
+            <span>Track Order</span><FiChevronRight size={16} className="text-brand-orange" />
           </Link>
 
           <div className="px-4 py-3 bg-gray-50 text-xs font-bold text-gray-400 uppercase tracking-wider mt-2 flex items-center gap-2">
