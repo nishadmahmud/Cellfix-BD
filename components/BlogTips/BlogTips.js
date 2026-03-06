@@ -3,12 +3,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function BlogTips() {
-    const posts = [
-        { id: 1, title: "5 Signs Your Battery Needs Replacing", excerpt: "Is your phone dying fast? Here are the telltale signs.", imageUrl: "https://images.unsplash.com/photo-1512439408685-2e399291a4e6?q=80&w=600", category: "Battery", readTime: "3 min" },
-        { id: 2, title: "How to Protect Your Screen From Cracks", excerpt: "Prevention is better than repair. Keep your screen safe.", imageUrl: "https://images.unsplash.com/photo-1585060544812-6b45742d762f?q=80&w=600", category: "Screen", readTime: "4 min" },
-        { id: 3, title: "Choosing the Right Charger", excerpt: "Wrong charger can damage your battery or slow charging.", imageUrl: "https://images.unsplash.com/photo-1585338107529-13afc5f02586?q=80&w=600", category: "Tips", readTime: "2 min" },
+export default function BlogTips({ posts: apiPosts = [] }) {
+    const defaultPosts = [
+        { id: 1, title: "5 Signs Your Battery Needs Replacing", excerpt: "Is your phone dying fast? Here are the telltale signs.", imageUrl: "https://images.unsplash.com/photo-1512439408685-2e399291a4e6?q=80&w=600", category: "Battery", readTime: "3 min", slug: "5-signs-your-battery-needs-replacing" },
+        { id: 2, title: "How to Protect Your Screen From Cracks", excerpt: "Prevention is better than repair. Keep your screen safe.", imageUrl: "https://images.unsplash.com/photo-1585060544812-6b45742d762f?q=80&w=600", category: "Screen", readTime: "4 min", slug: "how-to-protect-your-screen-from-cracks" },
+        { id: 3, title: "Choosing the Right Charger", excerpt: "Wrong charger can damage your battery or slow charging.", imageUrl: "https://images.unsplash.com/photo-1585338107529-13afc5f02586?q=80&w=600", category: "Tips", readTime: "2 min", slug: "choosing-the-right-charger" },
     ];
+
+    const displayPosts = apiPosts.length > 0 ? apiPosts : defaultPosts;
 
     return (
         <section className="bg-white py-10 md:py-20 border-b border-gray-100">
@@ -28,10 +30,10 @@ export default function BlogTips() {
                 {/* Horizontal scroll on mobile, grid on desktop */}
                 <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-3 md:gap-8 pb-2 md:pb-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                     <style jsx>{`div::-webkit-scrollbar { display: none; }`}</style>
-                    {posts.map((post) => (
-                        <Link href={`/blog/${post.id}`} key={post.id} className="group flex flex-col bg-white rounded-xl md:rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg hover:border-brand-orange/20 transition-all duration-300 min-w-[220px] md:min-w-0 flex-shrink-0">
+                    {displayPosts.map((post) => (
+                        <Link href={`/blog/${post.slug || post.id}`} key={post.id} className="group flex flex-col bg-white rounded-xl md:rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg hover:border-brand-orange/20 transition-all duration-300 min-w-[220px] md:min-w-0 flex-shrink-0">
                             <div className="w-full aspect-[16/9] relative overflow-hidden bg-gray-100">
-                                <Image src={post.imageUrl} alt={post.title} fill unoptimized className="object-cover object-center group-hover:scale-105 transition-transform duration-500" />
+                                <Image src={post.image || post.imageUrl} alt={post.title} fill unoptimized className="object-cover object-center group-hover:scale-105 transition-transform duration-500" />
                                 <div className="absolute top-2 left-2 md:top-3 md:left-3">
                                     <span className="bg-brand-orange text-white text-[8px] md:text-[10px] font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full uppercase tracking-wider">{post.category}</span>
                                 </div>

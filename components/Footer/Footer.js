@@ -38,25 +38,25 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div className="flex flex-col gap-3 md:gap-6">
-                        <h3 className="text-sm md:text-lg font-bold text-white">Repair Services</h3>
+                        <h3 className="text-sm md:text-lg font-bold text-white">Explore</h3>
                         <div className="flex flex-col gap-1.5 md:gap-3 text-[10px] md:text-sm">
-                            <Link href="/services/iphone" className="hover:text-white/70 transition-colors">iPhone Repair</Link>
-                            <Link href="/services/macbook" className="hover:text-white/70 transition-colors">MacBook Repair</Link>
-                            <Link href="/services/apple-watch" className="hover:text-white/70 transition-colors">Apple Watch</Link>
-                            <Link href="/services/ipad" className="hover:text-white/70 transition-colors">iPad Repair</Link>
-                            <Link href="/services/android" className="hover:text-white/70 transition-colors">Android Repair</Link>
+                            <Link href="/shop" className="hover:text-white/70 transition-colors">Shop Gadgets</Link>
+                            <Link href="/services" className="hover:text-white/70 transition-colors">Repair Services</Link>
+                            <Link href="/blog" className="hover:text-white/70 transition-colors">Blog & Tips</Link>
+                            <Link href="/track-order" className="hover:text-white/70 transition-colors">Track Your Order</Link>
+                            <Link href="/contact" className="hover:text-white/70 transition-colors">Contact Us</Link>
                         </div>
                     </div>
 
-                    {/* Shop Links */}
+                    {/* Shop Categories */}
                     <div className="flex flex-col gap-3 md:gap-6">
-                        <h3 className="text-sm md:text-lg font-bold text-white">Shop</h3>
+                        <h3 className="text-sm md:text-lg font-bold text-white">Top Categories</h3>
                         <div className="flex flex-col gap-1.5 md:gap-3 text-[10px] md:text-sm">
-                            <Link href="/category/iphones" className="hover:text-white/70 transition-colors">iPhones</Link>
-                            <Link href="/category/macbooks" className="hover:text-white/70 transition-colors">MacBooks</Link>
+                            <Link href="/category/phones" className="hover:text-white/70 transition-colors">Phones</Link>
+                            <Link href="/category/tablet" className="hover:text-white/70 transition-colors">Tablets</Link>
+                            <Link href="/category/laptop" className="hover:text-white/70 transition-colors">Laptops</Link>
+                            <Link href="/category/smart-watch" className="hover:text-white/70 transition-colors">Smart Watches</Link>
                             <Link href="/category/accessories" className="hover:text-white/70 transition-colors">Accessories</Link>
-                            <Link href="/category/used-phones" className="hover:text-white/70 transition-colors">Used Phones</Link>
-                            <Link href="/category/repair-tools" className="hover:text-white/70 transition-colors">Repair Tools</Link>
                         </div>
                     </div>
 
@@ -65,8 +65,6 @@ export default function Footer() {
                         <h3 className="text-sm md:text-lg font-bold text-white">Company</h3>
                         <div className="flex flex-col gap-1.5 md:gap-3 text-[10px] md:text-sm">
                             <Link href="/about" className="hover:text-white/70 transition-colors">About Us</Link>
-                            <Link href="/contact" className="hover:text-white/70 transition-colors">Contact Us</Link>
-                            <Link href="/track-order" className="text-white font-semibold hover:text-white/70 transition-colors">Track Order</Link>
                             <Link href="/privacy" className="hover:text-white/70 transition-colors">Privacy Policy</Link>
                             <Link href="/terms" className="hover:text-white/70 transition-colors">Terms & Conditions</Link>
                             <Link href="/refund" className="hover:text-white/70 transition-colors">Refund Policy</Link>

@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiSmartphone, FiMonitor, FiHeadphones, FiZap, FiBatteryCharging, FiTablet, FiSpeaker, FiCpu, FiHardDrive, FiWifi, FiPenTool, FiWatch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiSmartphone, FiMonitor, FiHeadphones, FiZap, FiBatteryCharging, FiTablet, FiSpeaker, FiCpu, FiHardDrive, FiWifi, FiPenTool, FiWatch, FiChevronLeft, FiChevronRight, FiGrid } from 'react-icons/fi';
 import ProductCard from '../Shared/ProductCard';
 
-export default function ShopCategories() {
+export default function ShopCategories({ categories: apiCategories = [], flashSaleProducts: apiFlashSale = [] }) {
     // Countdown timer — starts at 23 Days 4h 4m 59s
     const [timeLeft, setTimeLeft] = useState(23 * 86400 + 4 * 3600 + 4 * 60 + 59);
 
@@ -22,8 +22,7 @@ export default function ShopCategories() {
     const minutes = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, '0');
     const seconds = String(timeLeft % 60).padStart(2, '0');
 
-    // Layout ready to accept image URLs from the user
-    const categories = [
+    const defaultCategories = [
         { name: "Mobile Phone", icon: <FiSmartphone />, image: "" },
         { name: "Tablet", icon: <FiTablet />, image: "" },
         { name: "Laptop", icon: <FiMonitor />, image: "" },
@@ -42,13 +41,38 @@ export default function ShopCategories() {
         { name: "Accessories", icon: <FiWatch />, image: "" },
     ];
 
-    const flashSaleProducts = [
+    const displayCategories = apiCategories.length > 0
+        ? apiCategories.map((cat, idx) => {
+            const iconMap = {
+                'phones': <FiSmartphone />,
+                'smartphones': <FiSmartphone />,
+                'tablets': <FiTablet />,
+                'laptops': <FiMonitor />,
+                'accessories': <FiWatch />,
+                'audio': <FiHeadphones />,
+                'chargers': <FiZap />,
+                'cables': <FiBatteryCharging />
+            };
+            const slug = cat.slug || cat.name.toLowerCase();
+            return {
+                id: cat.id,
+                name: cat.name,
+                image: cat.image_path || cat.image_url || "",
+                icon: iconMap[slug] || iconMap[slug.replace(/s$/, '')] || <FiGrid />,
+                slug: slug
+            };
+        })
+        : defaultCategories;
+
+    const defaultFlashSale = [
         { id: 101, name: "Anker Zolo 20W PD 3.0...", price: "৳ 1,250", oldPrice: "৳ 1,499", discount: "-16%", imageUrl: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?q=80&w=600" },
         { id: 102, name: "iPhone 17 Pro Max", price: "৳ 1,68,490", oldPrice: "৳ 2,14,990", discount: "-21%", imageUrl: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=600" },
         { id: 103, name: "Mibro Earbuds 5", price: "৳ 1,192", oldPrice: "৳ 1,900", discount: "-37%", imageUrl: "https://images.unsplash.com/photo-1590658268037-6f14016628c0?q=80&w=600" },
         { id: 104, name: "iPhone 17", price: "৳ 1,12,990", oldPrice: "৳ 1,49,990", discount: "-24%", imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=600" },
         { id: 105, name: "iPhone 17 Pro", price: "৳ 1,52,990", oldPrice: "৳ 2,39,990", discount: "-36%", imageUrl: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=600" },
     ];
+
+    const displayFlashSale = apiFlashSale.length > 0 ? apiFlashSale : defaultFlashSale;
 
     return (
         <section className="bg-white py-10 md:py-20 border-b border-gray-100">
@@ -60,10 +84,10 @@ export default function ShopCategories() {
                 </div>
 
                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-8 gap-y-8 md:gap-y-12 gap-x-2 mb-16 md:mb-24">
-                    {categories.map((cat, idx) => (
+                    {displayCategories.map((cat, idx) => (
                         <Link
-                            href={`/category/${cat.name.toLowerCase().replace(/ /g, '-')}`}
-                            key={idx}
+                            href={`/category/${cat.slug || cat.name.toLowerCase().replace(/ /g, '-')}`}
+                            key={cat.id || idx}
                             className="flex flex-col items-center justify-start gap-3 md:gap-4 text-center group"
                         >
                             <div className="w-12 h-12 md:w-16 md:h-16 relative flex items-center justify-center text-3xl md:text-4xl text-gray-700 group-hover:scale-110 transition-transform duration-300">
@@ -117,19 +141,11 @@ export default function ShopCategories() {
 
                     {/* Product Row */}
                     <div className="relative group">
-                        <button className="absolute -left-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 bg-white shadow hover:shadow-md rounded-full flex items-center justify-center z-10 transition-colors text-gray-800 hidden md:flex">
-                            <FiChevronLeft size={20} />
-                        </button>
-
                         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 overflow-hidden">
-                            {flashSaleProducts.map((product) => (
+                            {displayFlashSale.slice(0, 5).map((product) => (
                                 <ProductCard key={product.id} product={product} />
                             ))}
                         </div>
-
-                        <button className="absolute -right-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 bg-white shadow hover:shadow-md rounded-full flex items-center justify-center z-10 transition-colors text-gray-800 hidden md:flex">
-                            <FiChevronRight size={20} />
-                        </button>
                     </div>
                 </div>
 

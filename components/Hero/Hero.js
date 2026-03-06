@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-export default function Hero() {
+export default function Hero({ slides: apiSlides = [], banners = [] }) {
     const [currentSlide, setCurrentSlide] = useState(0);
 
-    const slides = [
+    const defaultSlides = [
         {
             id: 1,
             badge: "Expert Repairs",
@@ -46,24 +46,32 @@ export default function Hero() {
         }
     ];
 
+    const displaySlides = apiSlides.length > 0
+        ? apiSlides.map((s, idx) => ({
+            ...defaultSlides[idx % defaultSlides.length],
+            id: `api-${idx}`,
+            imageUrl: s.image
+        }))
+        : defaultSlides;
+
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % slides.length);
+            setCurrentSlide((prev) => (prev + 1) % displaySlides.length);
         }, 5000);
         return () => clearInterval(timer);
-    }, [slides.length]);
+    }, [displaySlides.length]);
 
     return (
         <section className="w-full bg-white py-2 md:py-8 px-3 md:px-6">
             <div className="max-w-7xl mx-auto relative overflow-hidden rounded-xl h-[220px] sm:h-[320px] md:h-[500px] shadow-lg border border-gray-100">
-                {slides.map((slide, idx) => (
+                {displaySlides.map((slide, idx) => (
                     <div
                         key={slide.id}
                         className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${currentSlide === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
                     >
                         <Image
-                            src={slide.imageUrl}
-                            alt={slide.title}
+                            src={slide.imageUrl || "/no-image.svg"}
+                            alt={slide.title || "Hero Banner"}
                             fill
                             unoptimized
                             className="object-cover object-center z-0"
@@ -89,7 +97,7 @@ export default function Hero() {
                     </div>
                 ))}
                 <div className="absolute bottom-3 md:bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex gap-1.5 md:gap-2">
-                    {slides.map((_, idx) => (
+                    {displaySlides.map((_, idx) => (
                         <button
                             key={idx}
                             onClick={() => setCurrentSlide(idx)}

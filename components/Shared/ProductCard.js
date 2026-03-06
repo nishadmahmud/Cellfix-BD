@@ -2,8 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function ProductCard({ product }) {
-    // Generate a URL-friendly slug from the product name (convert to lowercase, replace spaces with hyphens)
-    const slug = product.name ? product.name.toLowerCase().replace(/\s+/g, '-') : 'product';
+    // Generate a URL-friendly slug from the product name and append the ID
+    const baseSlug = product.name ? product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'product';
+    const slug = product.id ? `${baseSlug}-${product.id}` : baseSlug;
 
     return (
         <Link href={`/product/${slug}`} className="bg-white border border-gray-100 rounded-[16px] pb-4 flex flex-col hover:border-brand-orange/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group overflow-hidden relative block">
@@ -20,8 +21,8 @@ export default function ProductCard({ product }) {
             {/* Image Container — flush edges, fixed aspect ratio */}
             <div className="w-full aspect-square relative flex items-center justify-center bg-[#f5f5f5] rounded-t-[16px]">
                 <Image
-                    src={product.imageUrl}
-                    alt={product.name}
+                    src={product.imageUrl || "/no-image.svg"}
+                    alt={product.name || "Product Image"}
                     fill
                     unoptimized
                     className="object-cover group-hover:scale-105 transition-transform duration-500"

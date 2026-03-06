@@ -1,10 +1,18 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-export default function ProductGallery({ images }) {
-    const [mainImage, setMainImage] = useState(images[0]);
+export default function ProductGallery({ images = [] }) {
+    const imageArray = images && images.length > 0 ? images : ['/no-image.svg'];
+    const [mainImage, setMainImage] = useState(imageArray[0]);
+
+    // When images prop changes (e.g., variant color selected), reset to first image
+    useEffect(() => {
+        if (imageArray.length > 0) {
+            setMainImage(imageArray[0]);
+        }
+    }, [images]);
 
     return (
         <div className="flex flex-col gap-4">
@@ -21,7 +29,7 @@ export default function ProductGallery({ images }) {
 
             {/* Thumbnail Strip */}
             <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                {images.map((img, idx) => (
+                {imageArray.map((img, idx) => (
                     <button
                         key={idx}
                         onClick={() => setMainImage(img)}

@@ -1,113 +1,272 @@
 "use client";
 
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import ProductGallery from '../../../components/Product/ProductGallery';
 import ProductInfo from '../../../components/Product/ProductInfo';
 import ProductTabs from '../../../components/Product/ProductTabs';
 import ProductCard from '../../../components/Shared/ProductCard';
+import { getProductById, getRelatedProduct } from '../../../lib/api';
 
 export default function ProductDetailsPage() {
     const params = useParams();
-    const productName = decodeURIComponent(params.slug || 'Product')
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
+    const slug = typeof params.slug === 'string' ? params.slug : params.slug?.[0] || '';
 
-    // Mock Data for the PDP
-    const productData = {
-        name: params.slug === 'iphone-16-plus' ? 'iPhone 16 Plus' : productName,
-        price: '৳ 102,000',
-        oldPrice: '৳ 110,000',
-        images: [
-            'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800',
-            'https://images.unsplash.com/photo-1605236453806-6ff36851218e?q=80&w=800',
-            'https://images.unsplash.com/photo-1556656793-08538906a9f8?q=80&w=800'
-        ],
-        variants: {
-            storage: ['128GB', '256GB', '512GB'],
-            colors: [
-                { name: 'Black', hex: '#000000' },
-                { name: 'Pink', hex: '#ffc0cb' },
-                { name: 'White', hex: '#ffffff' },
-                { name: 'Ultramarine', hex: '#120a8f' },
-            ],
-            regions: ['Singapore', 'India']
-        },
-        description: `
-            <p><strong>Samsung</strong> has officially launched the Galaxy A36 5G in March 2025. This device brings a sleek and modern design with a 6.7-inch Super AMOLED display that offers 120Hz refresh rate and HDR10+ support for a smooth and vibrant viewing experience. Powered by the Snapdragon 6 Gen 3 chipset, it ensures efficient performance for gaming and multitasking. The 50MP triple-camera setup with OIS and 4K video recording delivers sharp and stable images. A 5000mAh battery with 45W fast charging keeps you powered throughout the day. With IP67 water resistance and Gorilla Glass Victus+ protection, the Galaxy A36 5G is built to last.</p>
-            <br/>
-            <h3>Key Features</h3>
-            <p>Under the hood, it runs on a powerful processor built on an efficient architecture. With an Octa-Core CPU, multitasking is a breeze. From mobile gaming to running multiple apps simultaneously, this phone can handle it all without breaking a sweat. Paired with 8GB of RAM and 128GB of internal storage, you get enough power and space for all your apps, media, and more. And if that's not enough, there's always the cloud or expandable options to keep you going.</p>
-        `,
-        specifications: `
-            <ul class="list-disc pl-5 space-y-2">
-                <li><strong>Display:</strong> 6.7-inch Super AMOLED (120Hz)</li>
-                <li><strong>Processor:</strong> Snapdragon 6 Gen 3</li>
-                <li><strong>Rear Camera:</strong> 50MP OIS + 8MP Ultrawide + 5MP Macro</li>
-                <li><strong>Front Camera:</strong> 32MP</li>
-                <li><strong>Battery:</strong> 5000mAh with 45W Fast Charging</li>
-                <li><strong>OS:</strong> Android 14, One UI 6</li>
-            </ul>
-        `
-    };
+    // Parse product ID from slug (supports "product-name-12345" or just "12345")
+    const productId = useMemo(() => {
+        if (!slug) return null;
+        const decoded = decodeURIComponent(slug).trim();
 
-    // Mock Related Products
-    const relatedProducts = [
-        { id: 101, name: "Apple 20W USB-C Power Adapter", price: "৳ 2,200", oldPrice: "৳ 2,800", discount: "৳ 600", imageUrl: "https://images.unsplash.com/photo-1610945431131-c4214c7183e9?q=80&w=600" },
-        { id: 102, name: "Baseus 65W GaN Charger", price: "৳ 3,500", oldPrice: "৳ 4,500", discount: "৳ 1,000", imageUrl: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?q=80&w=600" },
-        { id: 103, name: "Samsung Galaxy A55 5G", price: "৳ 45,500", oldPrice: "৳ 52,200", discount: "৳ 6,700", imageUrl: "https://images.unsplash.com/photo-1610945431131-c4214c7183e9?q=80&w=600" },
-        { id: 104, name: "Samsung Galaxy S24 Ultra Back Cover", price: "৳ 1,200", oldPrice: null, discount: null, imageUrl: "https://images.unsplash.com/photo-1695504236952-1ee7e3bb6dfc?q=80&w=600" },
-    ];
+        // Case 1: slug is just the numeric ID
+        if (/^\d+$/.test(decoded)) {
+            const directId = Number(decoded);
+            return Number.isFinite(directId) && directId > 0 ? directId : null;
+        }
+
+        // Case 2: slug is "name-<id>"
+        const parts = decoded.split('-');
+        const maybeId = parts[parts.length - 1];
+        const idNum = Number(maybeId);
+        return Number.isFinite(idNum) && idNum > 0 ? idNum : null;
+    }, [slug]);
+
+    const [productData, setProductData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [relatedProducts, setRelatedProducts] = useState([]);
+    const [variantImages, setVariantImages] = useState(null);
+    const [fromCategory, setFromCategory] = useState(null); // { name, slug }
+
+    useEffect(() => {
+        // Check if we came from a category page
+        if (typeof document !== 'undefined' && document.referrer) {
+            const referrer = document.referrer;
+            if (referrer.includes('/category/')) {
+                // Try to extract category slug from referrer if needed, 
+                // but we'll get the real name from product data
+                setFromCategory(true);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!productId) {
+            setIsLoading(false);
+            setError('Invalid product.');
+            return;
+        }
+
+        let cancelled = false;
+
+        const load = async () => {
+            setIsLoading(true);
+            setError('');
+            try {
+                const res = await getProductById(productId);
+                const payload = res?.data || res;
+                if (!payload || !payload.id) {
+                    throw new Error('Product not found');
+                }
+
+                const p = payload;
+
+                const originalPrice = Number(p.retails_price || 0);
+                const discountValue = Number(p.discount || 0);
+                const discountType = String(p.discount_type || '').toLowerCase();
+                const hasDiscount = discountValue > 0 && discountType !== '0';
+
+                const price = hasDiscount
+                    ? discountType === 'percentage'
+                        ? Math.max(0, Math.round(originalPrice * (1 - discountValue / 100)))
+                        : Math.max(0, originalPrice - discountValue)
+                    : originalPrice;
+
+                const discountLabel = hasDiscount
+                    ? discountType === 'percentage'
+                        ? `-${discountValue}%`
+                        : `৳ ${discountValue.toLocaleString('en-IN')}`
+                    : null;
+
+                const images =
+                    (Array.isArray(p.images) && p.images.length > 0 && p.images) ||
+                    (Array.isArray(p.imei_image) && p.imei_image.filter(Boolean)) ||
+                    (p.image_path ? [p.image_path] : []) ||
+                    ['/no-image.svg'];
+
+                // Pass the raw imeis array for dynamic variant logic
+                const rawImeis = Array.isArray(p.imeis) ? p.imeis.filter(i => i.in_stock === 1) : [];
+
+                const specs = `
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>Brand:</strong> ${p.brand_name || p.brands?.name || 'N/A'}</li>
+                        <li><strong>Base price:</strong> ৳ ${originalPrice.toLocaleString('en-IN')}</li>
+                        <li><strong>Status:</strong> ${p.status || 'N/A'}</li>
+                        <li><strong>Current stock:</strong> ${p.current_stock ?? 'N/A'}</li>
+                    </ul>
+                `;
+
+                const mappedProduct = {
+                    id: p.id,
+                    name: p.name,
+                    price: `৳ ${price.toLocaleString('en-IN')}`,
+                    rawPrice: price,
+                    originalPrice,
+                    oldPrice: hasDiscount
+                        ? `৳ ${originalPrice.toLocaleString('en-IN')}`
+                        : null,
+                    discount: discountLabel,
+                    discountValue,
+                    discountType,
+                    hasDiscount,
+                    images,
+                    rawImeis,
+                    description: p.description || '',
+                    specifications: specs,
+                    category: {
+                        id: p.category_id || p.category?.id,
+                        name: p.category_name || p.category?.name,
+                        slug: p.category_slug || p.category?.slug || (p.category_name || p.category?.name)?.toLowerCase().replace(/\s+/g, '-')
+                    }
+                };
+
+                if (!cancelled) {
+                    setProductData(mappedProduct);
+                    setVariantImages(null); // reset on new product load
+                }
+
+                // Load related products
+                try {
+                    const relatedRes = await getRelatedProduct(p.id);
+                    const relatedPayload = relatedRes?.data || relatedRes;
+                    const relatedItems = Array.isArray(relatedPayload?.data)
+                        ? relatedPayload.data
+                        : Array.isArray(relatedPayload)
+                            ? relatedPayload
+                            : [];
+
+                    if (!cancelled) {
+                        const mappedRelated = relatedItems.map((rp) => {
+                            const rpPrice = Number(rp.retails_price || 0);
+                            return {
+                                id: rp.id,
+                                name: rp.name,
+                                price: `৳ ${rpPrice.toLocaleString('en-IN')}`,
+                                oldPrice: null,
+                                discount: null,
+                                imageUrl: rp.image_path || rp.image_path1 || rp.image_path2 || '/no-image.svg',
+                            };
+                        });
+                        setRelatedProducts(mappedRelated.slice(0, 8));
+                    }
+                } catch {
+                    // ignore related errors
+                }
+            } catch (err) {
+                console.error('Failed to load product details', err);
+                if (!cancelled) {
+                    setError('Failed to load product details.');
+                }
+            } finally {
+                if (!cancelled) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        load();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [productId]);
+
+    const productName =
+        productData?.name ||
+        (slug
+            ? decodeURIComponent(slug)
+                .replace(/-/g, ' ')
+                .replace(/\b\w/g, (ch) => ch.toUpperCase())
+            : 'Product');
+
+    // Determine which images to show in gallery
+    const galleryImages = variantImages && variantImages.length > 0
+        ? variantImages
+        : productData?.images;
 
     return (
         <div className="bg-white min-h-screen pb-12">
-            {/* Breadcrumb Header */}
-            <div className="border-b border-gray-100 bg-gray-50/50 py-3 md:py-4 mb-6 md:mb-10">
+            <div className="border-b border-brand-orange/10 bg-gradient-to-r from-brand-orange/5 to-transparent py-4 md:py-6 mb-6 md:mb-10">
                 <div className="max-w-7xl mx-auto px-4 md:px-6">
-                    <div className="text-[11px] md:text-sm text-gray-500 flex items-center gap-2">
-                        <span className="hover:text-[#1a3b34] cursor-pointer">Home</span> /
-                        <span className="hover:text-[#1a3b34] cursor-pointer">Shop</span> /
-                        <span className="text-brand-orange font-semibold capitalize truncate">{productData.name}</span>
+                    <div className="text-[11px] md:text-sm text-gray-500 flex items-center gap-2 font-medium">
+                        <Link href="/" className="hover:text-brand-orange cursor-pointer transition-colors">Home</Link>
+                        <span>/</span>
+                        {fromCategory && productData?.category?.name && (
+                            <>
+                                <Link
+                                    href={`/category/${productData.category.slug}`}
+                                    className="hover:text-brand-orange cursor-pointer transition-colors capitalize"
+                                >
+                                    {productData.category.name}
+                                </Link>
+                                <span>/</span>
+                            </>
+                        )}
+                        <span className="text-brand-orange font-bold capitalize truncate">{productName}</span>
                     </div>
                 </div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 md:px-6">
 
-                {/* 2-Column Top Layout */}
-                <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
-
-                    {/* Col 1: Gallery (40% on Desktop, 50% iPad) */}
-                    <div className="w-full md:w-1/2 lg:w-[40%] shrink-0">
-                        <ProductGallery images={productData.images} />
+                {isLoading ? (
+                    <div className="py-20 flex flex-col items-center justify-center">
+                        <div className="w-10 h-10 border-4 border-brand-orange/20 border-t-brand-orange rounded-full animate-spin mb-4"></div>
+                        <p className="text-sm text-gray-500">Loading product details…</p>
                     </div>
-
-                    {/* Col 2: Info (60% on Desktop, 50% iPad) */}
-                    <div className="w-full md:w-1/2 lg:w-[60%]">
-                        <ProductInfo product={productData} />
+                ) : error || !productData ? (
+                    <div className="py-20 text-center">
+                        <p className="text-sm text-red-500">{error || 'Product not found.'}</p>
                     </div>
-                </div>
+                ) : (
+                    <>
+                        {/* 2-Column Top Layout */}
+                        <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
+                            {/* Col 1: Gallery */}
+                            <div className="w-full md:w-1/2 lg:w-[40%] shrink-0">
+                                <ProductGallery images={galleryImages} />
+                            </div>
 
-                {/* Bottom: Tabs */}
-                <ProductTabs
-                    description={productData.description}
-                    specifications={productData.specifications}
-                />
+                            {/* Col 2: Info */}
+                            <div className="w-full md:w-1/2 lg:w-[60%]">
+                                <ProductInfo
+                                    product={productData}
+                                    onVariantImageChange={setVariantImages}
+                                />
+                            </div>
+                        </div>
 
-                {/* Related Products Section */}
-                <div className="mt-16 md:mt-24 pt-12 border-t border-gray-200">
-                    <h2 className="text-2xl md:text-3xl font-extrabold text-[#1a3b34] mb-8 text-center md:text-left">
-                        Related Products
-                    </h2>
+                        {/* Bottom: Tabs */}
+                        <ProductTabs
+                            description={productData.description}
+                            specifications={productData.specifications}
+                        />
 
-                    {/* Reusing ProductGrid for display, omitting the onOpenFilter/sort headers since this is just a short list */}
-                    {/* We can hide the top bar via CSS or just map cards directly for simplicity */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
-                        {relatedProducts.map(product => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
-                </div>
+                        {/* Related Products Section */}
+                        {relatedProducts.length > 0 && (
+                            <div className="mt-16 md:mt-24 pt-12 border-t border-gray-200">
+                                <h2 className="text-2xl md:text-3xl font-extrabold text-[#1a3b34] mb-8 text-center md:text-left">
+                                    Related Products
+                                </h2>
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+                                    {relatedProducts.map(product => (
+                                        <ProductCard key={product.id} product={product} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );

@@ -3,15 +3,11 @@
 import { useState } from 'react';
 import ProductCard from '../Shared/ProductCard';
 
-export default function DiscountedParts() {
-    const [activeTab, setActiveTab] = useState('Battery');
-
-    const tabs = ['Battery', 'Screens'];
-
+export default function DiscountedParts({ products: apiProducts = {} }) {
     const batteryImage = "https://images.unsplash.com/photo-1512439408685-2e399291a4e6?q=80&w=1095&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
     const screenImage = "https://images.unsplash.com/photo-1585060544812-6b45742d762f?q=80&w=400";
 
-    const products = {
+    const defaultProducts = {
         'Battery': [
             { id: 1, name: "iPhone X Battery", price: "2200 TK", oldPrice: "3000", discount: "-27%", imageUrl: batteryImage },
             { id: 2, name: "iPhone 8 Plus Battery", price: "1500 TK", oldPrice: "1800", discount: "-17%", imageUrl: batteryImage },
@@ -31,7 +27,13 @@ export default function DiscountedParts() {
         ]
     };
 
-    const activeProducts = products[activeTab];
+    const productsToDisplay = Object.keys(apiProducts).length > 0 ? apiProducts : defaultProducts;
+    const tabs = Object.keys(productsToDisplay);
+
+    const [activeTab, setActiveTab] = useState(tabs[0] || '');
+
+    const currentTab = tabs.includes(activeTab) ? activeTab : (tabs[0] || '');
+    const activeProducts = productsToDisplay[currentTab] || [];
 
     return (
         <section className="bg-white py-8 md:py-16 border-b border-gray-100">
