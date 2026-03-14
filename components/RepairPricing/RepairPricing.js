@@ -70,27 +70,53 @@ export default function RepairPricing() {
                     </div>
                 </div>
 
-                {/* Editorial Pricing Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-4 md:gap-y-6">
-                    {activePricing.map((item, idx) => (
-                        <div key={idx} className="flex flex-col py-4 border-b border-gray-200">
-                            <div className="flex justify-between items-end mb-2">
-                                <h3 className="text-lg md:text-xl font-bold text-gray-900 tracking-tight">{item.model}</h3>
-                                <div className="flex-grow border-b border-dotted border-gray-300 mx-4 mb-2"></div>
-                                <span className="text-brand-orange font-bold text-lg md:text-xl">৳{item.screen} <span className="text-[10px] md:text-xs text-gray-400 font-normal ml-1">Screen</span></span>
-                            </div>
-
-                            <div className="flex items-center gap-4 text-xs md:text-sm text-gray-500 font-medium tracking-wide">
-                                <span>Battery: <span className="text-gray-900">৳{item.battery}</span></span>
-                                {item.backGlass !== "—" && (
-                                    <>
-                                        <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                                        <span>Back Glass: <span className="text-gray-900">৳{item.backGlass}</span></span>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    ))}
+                {/* Table Pricing Layout */}
+                <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] w-full transition-all duration-300">
+                    <div className="overflow-x-auto w-full">
+                        <table className="w-full text-left border-collapse min-w-[600px]">
+                            <thead>
+                                <tr className="bg-gray-50/50 border-b border-gray-100">
+                                    <th className="px-6 py-5 text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider">Device Model</th>
+                                    <th className="px-6 py-5 text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider text-right md:text-left">Screen Repair</th>
+                                    <th className="px-6 py-5 text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider text-right md:text-left">Battery</th>
+                                    <th className="px-6 py-5 text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider text-right md:text-left">Back Glass</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-50">
+                                {activePricing.map((item, idx) => (
+                                    <tr key={idx} className="hover:bg-brand-orange/5 transition-colors group">
+                                        <td className="px-6 py-5 whitespace-nowrap">
+                                            <span className="text-base md:text-lg font-bold text-gray-900 tracking-tight group-hover:text-brand-orange transition-colors">
+                                                {item.model}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-5 text-right md:text-left whitespace-nowrap">
+                                            <span className="inline-flex items-center gap-1">
+                                                <span className="text-brand-orange text-sm font-bold">৳</span>
+                                                <span className="font-bold text-gray-900 text-base md:text-lg">{item.screen}</span>
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-5 text-right md:text-left whitespace-nowrap">
+                                            <span className="inline-flex items-center gap-1">
+                                                <span className="text-gray-400 text-sm">৳</span>
+                                                <span className="font-semibold text-gray-700 text-base">{item.battery}</span>
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-5 text-right md:text-left whitespace-nowrap">
+                                            {item.backGlass !== "—" ? (
+                                                <span className="inline-flex items-center gap-1">
+                                                    <span className="text-gray-400 text-sm">৳</span>
+                                                    <span className="font-semibold text-gray-700 text-base">{item.backGlass}</span>
+                                                </span>
+                                            ) : (
+                                                <span className="text-gray-300 font-medium inline-block w-full md:w-auto text-center md:text-left md:pl-4">—</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div className="mt-12 md:mt-20 text-center">
