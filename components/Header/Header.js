@@ -18,6 +18,8 @@ export default function Header({ categories = [] }) {
   const [searchResults, setSearchResults] = useState([]);
   const [searchCategories, setSearchCategories] = useState([]);
   const [activeSearchCategory, setActiveSearchCategory] = useState('all');
+  const [hoveredCatIdx, setHoveredCatIdx] = useState(null);
+  const [activeSubIdx, setActiveSubIdx] = useState(0);
 
   const { cartCount, openCart } = useCart();
   const { user, openAuthModal } = useAuth();
@@ -352,17 +354,102 @@ export default function Header({ categories = [] }) {
 
         {/* Desktop Category Strip */}
         <div className="hidden md:block bg-white py-3 text-sm border-b border-gray-100 shadow-sm relative z-40">
-          <div className="max-w-7xl mx-auto flex flex-wrap gap-x-6 gap-y-3 px-6 items-center">
-            <span className="font-bold text-gray-500 text-sm flex-shrink-0">Categories:</span>
-            {displayCategories.map((cat, idx) => (
-              <Link
-                key={cat.id || idx}
-                href={`/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
-                className="text-gray-700 font-medium hover:text-brand-orange transition-all duration-300"
-              >
-                {cat.name}
-              </Link>
-            ))}
+          <div className="max-w-7xl mx-auto flex flex-wrap gap-2 px-6 items-center">
+            <span className="font-bold text-gray-500 text-sm flex-shrink-0 mr-2">Categories:</span>
+            {displayCategories.map((cat, idx) => {
+              const subCats = cat.sub_category || [];
+              const hasSubCats = subCats.length > 0;
+              return (
+                <div
+                  key={cat.id || cat.category_id || idx}
+                  className="relative"
+                  onMouseEnter={() => { setHoveredCatIdx(idx); setActiveSubIdx(0); }}
+                  onMouseLeave={() => setHoveredCatIdx(null)}
+                >
+                  <Link
+                    href={`/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={`font-semibold text-xs px-4 py-1.5 rounded-full inline-flex items-center gap-1 transition-all duration-200 shadow-sm hover:shadow-md ${
+                      hoveredCatIdx === idx
+                        ? 'bg-brand-orange text-white'
+                        : 'bg-brand-orange/90 hover:bg-brand-orange text-white'
+                    }`}
+                  >
+                    {cat.name}
+                    {hasSubCats && <span className="text-[9px] text-white/70">▾</span>}
+                  </Link>
+
+                  {/* Two-panel Mega Menu */}
+                  {hasSubCats && hoveredCatIdx === idx && (
+                    <div className="fixed left-0 right-0 z-50" style={{ top: 'auto' }}>
+                      <div className="bg-white shadow-2xl border-t-2 border-brand-orange">
+                        <div className="max-w-7xl mx-auto flex" style={{ minHeight: '200px', maxHeight: '50vh' }}>
+                          {/* Left: Subcategory List */}
+                          <div className="w-56 bg-gray-50 border-r border-gray-200 flex-shrink-0 overflow-y-auto py-3">
+                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-4 mb-2">Subcategories</h3>
+                            <ul>
+                              {subCats.map((sub, sIdx) => (
+                                <li key={sub.id}>
+                                  <button
+                                    onMouseEnter={() => setActiveSubIdx(sIdx)}
+                                    onClick={() => { setHoveredCatIdx(null); window.location.href = `/subcategory/${sub.id}`; }}
+                                    className={`w-full text-left px-4 py-2 text-sm transition-colors flex justify-between items-center ${
+                                      activeSubIdx === sIdx
+                                        ? 'bg-brand-orange text-white font-semibold'
+                                        : 'text-gray-600 hover:bg-orange-50 hover:text-brand-orange'
+                                    }`}
+                                  >
+                                    <span className="truncate">{sub.name}</span>
+                                    {sub.child_categories && sub.child_categories.length > 0 && (
+                                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 ml-2 ${
+                                        activeSubIdx === sIdx ? 'bg-white/20' : 'bg-gray-200'
+                                      }`}>{sub.child_categories.length}</span>
+                                    )}
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          {/* Right: Child Categories */}
+                          <div className="flex-1 overflow-y-auto p-5">
+                            {subCats[activeSubIdx] && (
+                              <>
+                                <div className="flex items-center justify-between mb-4">
+                                  <h3 className="font-bold text-gray-800">{subCats[activeSubIdx].name}</h3>
+                                  <Link
+                                    href={`/subcategory/${subCats[activeSubIdx].id}`}
+                                    onClick={() => setHoveredCatIdx(null)}
+                                    className="text-xs text-brand-orange hover:underline font-medium"
+                                  >
+                                    View All →
+                                  </Link>
+                                </div>
+                                {subCats[activeSubIdx].child_categories && subCats[activeSubIdx].child_categories.length > 0 ? (
+                                  <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                                    {subCats[activeSubIdx].child_categories.map(child => (
+                                      <Link
+                                        key={child.id}
+                                        href={`/child-category/${child.id}`}
+                                        onClick={() => setHoveredCatIdx(null)}
+                                        className="text-sm text-gray-600 hover:text-brand-orange hover:bg-orange-50 px-3 py-2 rounded-lg transition-all duration-200 border border-transparent hover:border-brand-orange/20"
+                                      >
+                                        {child.name}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <p className="text-sm text-gray-400">No further subcategories. Click "View All" to see products.</p>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </header>
