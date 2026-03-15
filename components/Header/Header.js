@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -24,6 +24,29 @@ export default function Header({ categories = [] }) {
   const { cartCount, openCart } = useCart();
   const { user, openAuthModal } = useAuth();
   const router = useRouter();
+  const closeTimeout = useRef(null);
+
+  const handleCatEnter = (idx) => {
+    if (closeTimeout.current) {
+      clearTimeout(closeTimeout.current);
+      closeTimeout.current = null;
+    }
+    setHoveredCatIdx(idx);
+    setActiveSubIdx(0);
+  };
+
+  const handleCatLeave = () => {
+    closeTimeout.current = setTimeout(() => {
+      setHoveredCatIdx(null);
+    }, 150); // 150ms buffer to reach the modal
+  };
+
+  const handleModalEnter = () => {
+    if (closeTimeout.current) {
+      clearTimeout(closeTimeout.current);
+      closeTimeout.current = null;
+    }
+  };
 
   const defaultCategories = [
     { name: "iPhones", slug: "iphones" },
@@ -201,7 +224,7 @@ export default function Header({ categories = [] }) {
             <nav className="hidden lg:flex gap-8 font-semibold text-white/90">
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
               <Link href="/services" className="hover:text-white transition-colors">Repair Services</Link>
-              <Link href="/shop" className="hover:text-white transition-colors">Shop Gadgets</Link>
+              <Link href="/category" className="hover:text-white transition-colors">Shop Gadgets</Link>
             </nav>
 
             {/* Desktop Action Icons */}
@@ -354,7 +377,10 @@ export default function Header({ categories = [] }) {
 
         {/* Desktop Category Strip */}
         <div className="hidden md:block bg-white py-3 text-sm border-b border-gray-100 shadow-sm relative z-40">
-          <div className="max-w-7xl mx-auto flex flex-wrap gap-2 px-6 items-center">
+          <div 
+            className="max-w-7xl mx-auto flex flex-wrap gap-2 px-6 items-center"
+            onMouseLeave={handleCatLeave}
+          >
             <span className="font-bold text-gray-500 text-sm flex-shrink-0 mr-2">Categories:</span>
             {displayCategories.map((cat, idx) => {
               const subCats = cat.sub_category || [];
@@ -363,8 +389,7 @@ export default function Header({ categories = [] }) {
                 <div
                   key={cat.id || cat.category_id || idx}
                   className="relative"
-                  onMouseEnter={() => { setHoveredCatIdx(idx); setActiveSubIdx(0); }}
-                  onMouseLeave={() => setHoveredCatIdx(null)}
+                  onMouseEnter={() => handleCatEnter(idx)}
                 >
                   <Link
                     href={`/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
@@ -377,79 +402,109 @@ export default function Header({ categories = [] }) {
                     {cat.name}
                     {hasSubCats && <span className="text-[9px] text-white/70">▾</span>}
                   </Link>
-
-                  {/* Two-panel Mega Menu */}
-                  {hasSubCats && hoveredCatIdx === idx && (
-                    <div className="fixed left-0 right-0 z-50" style={{ top: 'auto' }}>
-                      <div className="bg-white shadow-2xl border-t-2 border-brand-orange">
-                        <div className="max-w-7xl mx-auto flex" style={{ minHeight: '200px', maxHeight: '50vh' }}>
-                          {/* Left: Subcategory List */}
-                          <div className="w-56 bg-gray-50 border-r border-gray-200 flex-shrink-0 overflow-y-auto py-3">
-                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-4 mb-2">Subcategories</h3>
-                            <ul>
-                              {subCats.map((sub, sIdx) => (
-                                <li key={sub.id}>
-                                  <button
-                                    onMouseEnter={() => setActiveSubIdx(sIdx)}
-                                    onClick={() => { setHoveredCatIdx(null); window.location.href = `/subcategory/${sub.id}`; }}
-                                    className={`w-full text-left px-4 py-2 text-sm transition-colors flex justify-between items-center ${
-                                      activeSubIdx === sIdx
-                                        ? 'bg-brand-orange text-white font-semibold'
-                                        : 'text-gray-600 hover:bg-orange-50 hover:text-brand-orange'
-                                    }`}
-                                  >
-                                    <span className="truncate">{sub.name}</span>
-                                    {sub.child_categories && sub.child_categories.length > 0 && (
-                                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0 ml-2 ${
-                                        activeSubIdx === sIdx ? 'bg-white/20' : 'bg-gray-200'
-                                      }`}>{sub.child_categories.length}</span>
-                                    )}
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-
-                          {/* Right: Child Categories */}
-                          <div className="flex-1 overflow-y-auto p-5">
-                            {subCats[activeSubIdx] && (
-                              <>
-                                <div className="flex items-center justify-between mb-4">
-                                  <h3 className="font-bold text-gray-800">{subCats[activeSubIdx].name}</h3>
-                                  <Link
-                                    href={`/subcategory/${subCats[activeSubIdx].id}`}
-                                    onClick={() => setHoveredCatIdx(null)}
-                                    className="text-xs text-brand-orange hover:underline font-medium"
-                                  >
-                                    View All →
-                                  </Link>
-                                </div>
-                                {subCats[activeSubIdx].child_categories && subCats[activeSubIdx].child_categories.length > 0 ? (
-                                  <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-                                    {subCats[activeSubIdx].child_categories.map(child => (
-                                      <Link
-                                        key={child.id}
-                                        href={`/child-category/${child.id}`}
-                                        onClick={() => setHoveredCatIdx(null)}
-                                        className="text-sm text-gray-600 hover:text-brand-orange hover:bg-orange-50 px-3 py-2 rounded-lg transition-all duration-200 border border-transparent hover:border-brand-orange/20"
-                                      >
-                                        {child.name}
-                                      </Link>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <p className="text-sm text-gray-400">No further subcategories. Click "View All" to see products.</p>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             })}
+
+            {/* Global Mega Menu Container */}
+            {hoveredCatIdx !== null && displayCategories[hoveredCatIdx]?.sub_category?.length > 0 && (
+              <>
+                {/* Backdrop Blur overlay */}
+                <div className="fixed inset-0 top-[180px] bg-black/10 backdrop-blur-[2px] z-40 pointer-events-none transition-opacity duration-300" />
+
+                {/* Two-panel Mega Menu logic moved outside loop */}
+                <div 
+                  className="absolute top-full left-0 right-0 z-50 pt-2 px-6"
+                  onMouseEnter={handleModalEnter}
+                  onMouseLeave={handleCatLeave}
+                >
+                  <div className="bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-t-2 border-brand-orange overflow-hidden rounded-b-2xl">
+                    <div className="flex" style={{ minHeight: '300px', maxHeight: '60vh' }}>
+                      {/* Left: Subcategory List (Sidebar) */}
+                      <div className="w-64 bg-gray-50/50 border-r border-gray-100 flex-shrink-0 overflow-y-auto py-4">
+                        <div className="px-5 mb-3">
+                          <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.1em]">Subcategories</h3>
+                        </div>
+                        <ul className="space-y-0.5 px-2">
+                          {displayCategories[hoveredCatIdx].sub_category.map((sub, sIdx) => (
+                            <li key={sub.id}>
+                              <button
+                                onMouseEnter={() => setActiveSubIdx(sIdx)}
+                                onClick={() => { setHoveredCatIdx(null); router.push(`/subcategory/${sub.id}`); }}
+                                className={`w-full text-left px-4 py-2.5 text-[13px] rounded-lg transition-all duration-200 flex justify-between items-center group/item ${
+                                  activeSubIdx === sIdx
+                                    ? 'bg-brand-orange text-white font-bold shadow-md shadow-brand-orange/20'
+                                    : 'text-gray-600 hover:bg-orange-50 hover:text-brand-orange font-medium'
+                                }`}
+                              >
+                                <span className="truncate">{sub.name}</span>
+                                <div className="flex items-center gap-2">
+                                  {sub.child_categories && sub.child_categories.length > 0 && (
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-md flex-shrink-0 transition-colors ${
+                                      activeSubIdx === sIdx ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-400 group-hover/item:bg-brand-orange/10 group-hover/item:text-brand-orange'
+                                    }`}>{sub.child_categories.length}</span>
+                                  )}
+                                  <FiChevronRight className={`text-[12px] transition-transform duration-200 ${
+                                    activeSubIdx === sIdx ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0 group-hover/item:translate-x-0 group-hover/item:opacity-100'
+                                  }`} />
+                                </div>
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Right: Child Categories (Content) */}
+                      <div className="flex-1 overflow-y-auto bg-white">
+                        {displayCategories[hoveredCatIdx].sub_category[activeSubIdx] && (
+                          <div className="p-8">
+                            <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-50">
+                              <div>
+                                <h3 className="text-xl font-black text-gray-900 mb-1">{displayCategories[hoveredCatIdx].sub_category[activeSubIdx].name}</h3>
+                                <p className="text-xs text-gray-400 font-medium">Explore all products in this category</p>
+                              </div>
+                              <Link
+                                href={`/subcategory/${displayCategories[hoveredCatIdx].sub_category[activeSubIdx].id}`}
+                                onClick={() => setHoveredCatIdx(null)}
+                                className="px-4 py-2 rounded-full border border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white transition-all duration-300 text-xs font-bold flex items-center gap-2"
+                              >
+                                Shop All Products <FiChevronRight />
+                              </Link>
+                            </div>
+
+                            {displayCategories[hoveredCatIdx].sub_category[activeSubIdx].child_categories && displayCategories[hoveredCatIdx].sub_category[activeSubIdx].child_categories.length > 0 ? (
+                              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                {displayCategories[hoveredCatIdx].sub_category[activeSubIdx].child_categories.map(child => (
+                                  <Link
+                                    key={child.id}
+                                    href={`/child-category/${child.id}`}
+                                    onClick={() => setHoveredCatIdx(null)}
+                                    className="group/child flex items-center justify-between p-4 rounded-xl border border-gray-50 hover:border-brand-orange/20 hover:bg-orange-50/30 transition-all duration-300 shadow-sm hover:shadow-md"
+                                  >
+                                    <span className="text-[13px] font-bold text-gray-700 group-hover/child:text-brand-orange transition-colors">
+                                      {child.name}
+                                    </span>
+                                    <FiChevronRight className="text-gray-300 group-hover/child:text-brand-orange group-hover/child:translate-x-1 transition-all" />
+                                  </Link>
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="flex flex-col items-center justify-center py-12 text-center">
+                                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 text-gray-300">
+                                  <FiGrid size={24} />
+                                </div>
+                                <h4 className="text-gray-900 font-bold mb-1">More items coming soon</h4>
+                                <p className="text-sm text-gray-400 max-w-xs mx-auto">We're currently updating our catalog for this category. Check back soon for new arrivals!</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>

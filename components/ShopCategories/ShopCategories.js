@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { FiSmartphone, FiMonitor, FiHeadphones, FiZap, FiBatteryCharging, FiTablet, FiSpeaker, FiCpu, FiHardDrive, FiWifi, FiPenTool, FiWatch, FiChevronLeft, FiChevronRight, FiGrid } from 'react-icons/fi';
 import ProductCard from '../Shared/ProductCard';
 
-export default function ShopCategories({ categories: apiCategories = [], flashSaleProducts: apiFlashSale = [] }) {
+export default function ShopCategories({ categories: apiCategories = [], flashSaleProducts: apiFlashSale = [], hideTitle = false }) {
     // Countdown timer — starts at 23 Days 4h 4m 59s
     const [timeLeft, setTimeLeft] = useState(23 * 86400 + 4 * 3600 + 4 * 60 + 59);
 
@@ -50,13 +50,15 @@ export default function ShopCategories({ categories: apiCategories = [], flashSa
     }
 
     return (
-        <section className="bg-white py-10 md:py-20 border-b border-gray-100">
+        <section className={`bg-white border-b border-gray-100 ${hideTitle ? 'py-4 md:py-8' : 'py-10 md:py-20'}`}>
             <div className="max-w-7xl mx-auto px-3 md:px-6">
-                <div className="mb-10 md:mb-16">
-                    <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
-                        Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600">Categories</span>
-                    </h2>
-                </div>
+                {!hideTitle && (
+                    <div className="mb-10 md:mb-16">
+                        <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+                            Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-purple-600">Categories</span>
+                        </h2>
+                    </div>
+                )}
 
                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-8 gap-y-8 md:gap-y-12 gap-x-2 mb-16 md:mb-24">
                     {displayCategories.map((cat, idx) => (

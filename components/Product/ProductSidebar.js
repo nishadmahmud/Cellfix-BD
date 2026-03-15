@@ -14,8 +14,8 @@ export default function ProductSidebar() {
     };
 
     const warranties = [
-        { id: 1, title: "Dizmo Care+ 1 Year", desc: "Brand New Replacement Guarantee", price: "BDT 5,100" },
-        { id: 2, title: "Dizmo Screen Care+ : 730 days", desc: "One time display replacements (excluding physical damage)", price: "BDT 6,120" },
+        { id: 1, title: "cellflix Care+ 1 Year", desc: "Brand New Replacement Guarantee", price: "BDT 5,100" },
+        { id: 2, title: "cellflix Screen Care+ : 730 days", desc: "One time display replacements (excluding physical damage)", price: "BDT 6,120" },
         { id: 3, title: "1 Year Parts Warranty", desc: "", price: "BDT 4,080" },
     ];
 

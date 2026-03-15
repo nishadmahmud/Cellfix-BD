@@ -23,3 +23,30 @@ body {
   color: #1f2937;
   /* Tailwind gray-800 */
 }
+
+/* Custom Thin Scrollbar - Global */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #FF4D00 #f1f1f1;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #FF4D00;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #E64500;
+}
