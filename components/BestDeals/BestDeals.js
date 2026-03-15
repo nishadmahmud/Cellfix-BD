@@ -2,32 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function BestDeals({ deals: apiDeals = [] }) {
-    const defaultDeals = [
-        {
-            id: 1,
-            title: "iPhone 14 Pro + Free Case Bundle",
-            description: "Get the iPhone 14 Pro with a premium silicone case and screen protector absolutely free.",
-            price: "৳110,000",
-            oldPrice: "৳145,000",
-            savings: "Save ৳35,000",
-            imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800",
-            badge: "BEST DEAL",
-            link: "/shop"
-        },
-        {
-            id: 2,
-            title: "MacBook Air M2 — Student Offer",
-            description: "M2 chip, 8GB RAM, 256GB SSD. Includes free carrying sleeve.",
-            price: "৳125,000",
-            oldPrice: "৳155,000",
-            savings: "Save ৳30,000",
-            imageUrl: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=800",
-            badge: "STUDENT DEAL",
-            link: "/shop"
-        },
-    ];
+    const displayDeals = apiDeals;
 
-    const displayDeals = apiDeals.length > 0 ? apiDeals : defaultDeals;
+    if (displayDeals.length === 0) {
+        return null;
+    }
 
     return (
         <section className="bg-gray-50 py-10 md:py-20 border-b border-gray-100">

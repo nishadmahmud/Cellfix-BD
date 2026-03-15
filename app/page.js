@@ -220,10 +220,10 @@ export default async function Home() {
     <>
       <Hero slides={heroSlides} banners={homeBanners} />
       <TrustStats />
+      <ShopCategories categories={categories} flashSaleProducts={flashSaleProducts} />
       <RepairServices />
       <RepairPricing />
 
-      <ShopCategories categories={categories} flashSaleProducts={flashSaleProducts} />
       <NewArrivals products={newArrivals} />
       <DiscountedParts products={discountedProductsByBrand} />
       <FeaturedProducts products={featuredProducts} />

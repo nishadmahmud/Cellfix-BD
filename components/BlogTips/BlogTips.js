@@ -4,13 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function BlogTips({ posts: apiPosts = [] }) {
-    const defaultPosts = [
-        { id: 1, title: "5 Signs Your Battery Needs Replacing", excerpt: "Is your phone dying fast? Here are the telltale signs.", imageUrl: "https://images.unsplash.com/photo-1512439408685-2e399291a4e6?q=80&w=600", category: "Battery", readTime: "3 min", slug: "5-signs-your-battery-needs-replacing" },
-        { id: 2, title: "How to Protect Your Screen From Cracks", excerpt: "Prevention is better than repair. Keep your screen safe.", imageUrl: "https://images.unsplash.com/photo-1585060544812-6b45742d762f?q=80&w=600", category: "Screen", readTime: "4 min", slug: "how-to-protect-your-screen-from-cracks" },
-        { id: 3, title: "Choosing the Right Charger", excerpt: "Wrong charger can damage your battery or slow charging.", imageUrl: "https://images.unsplash.com/photo-1585338107529-13afc5f02586?q=80&w=600", category: "Tips", readTime: "2 min", slug: "choosing-the-right-charger" },
-    ];
+    const displayPosts = apiPosts;
 
-    const displayPosts = apiPosts.length > 0 ? apiPosts : defaultPosts;
+    if (displayPosts.length === 0) {
+        return null;
+    }
 
     return (
         <section className="bg-white py-10 md:py-20 border-b border-gray-100">

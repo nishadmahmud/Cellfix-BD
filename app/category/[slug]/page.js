@@ -80,14 +80,16 @@ export default function CategoryPage() {
             try {
                 const catRes = await getCategoriesFromServer();
                 if (catRes?.success && Array.isArray(catRes.data)) {
-                    const normalize = (val) => val ? String(val).toLowerCase().trim().replace(/\s+/g, '-') : '';
-                    const slugLower = String(rawSlug).toLowerCase();
+                    const normalize = (val) => val ? String(val).toLowerCase().trim().replace(/[\s_]+/g, '-') : '';
+                    const decodedSlug = decodeURIComponent(rawSlug);
+                    const slugLower = normalize(decodedSlug);
 
                     const found = catRes.data.find((c) =>
                         String(c.category_id) === String(rawSlug) ||
                         String(c.id) === String(rawSlug) ||
                         normalize(c.name) === slugLower ||
-                        normalize(c.slug) === slugLower
+                        normalize(c.slug) === slugLower ||
+                        String(c.name).toLowerCase() === String(decodedSlug).toLowerCase()
                     );
 
                     if (found) {

@@ -4,15 +4,11 @@ import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import ProductCard from '../Shared/ProductCard';
 
 export default function NewArrivals({ products: apiProducts = [] }) {
-    const defaultProducts = [
-        { id: 1, name: "Anker Soundcore R60i NC TWS Earbuds", price: "৳ 3,500", oldPrice: "৳ 4,200", discount: "৳ 700", imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=600" },
-        { id: 2, name: "OnePlus Nord Buds 3r", price: "৳ 2,750", oldPrice: "৳ 3,100", discount: "৳ 350", imageUrl: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=600" },
-        { id: 3, name: "OnePlus Buds 4 ANC TWS Earbuds", price: "৳ 7,850", oldPrice: "৳ 9,500", discount: "৳ 1,650", imageUrl: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=600" },
-        { id: 4, name: "PHILIPS QP2724/10 OneBlade Trimmer", price: "৳ 4,000", oldPrice: null, discount: null, imageUrl: "https://images.unsplash.com/photo-1556228720-192a6af4e86e?q=80&w=600" },
-        { id: 5, name: "Anker A1638 Nano Power Bank with...", price: "৳ 5,000", oldPrice: "৳ 5,500", discount: "৳ 500", imageUrl: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?q=80&w=600" }
-    ];
+    const displayProducts = apiProducts;
 
-    const displayProducts = apiProducts.length > 0 ? apiProducts : defaultProducts;
+    if (displayProducts.length === 0) {
+        return null;
+    }
 
     return (
         <section className="bg-white py-10 md:py-20 border-b border-gray-100">

@@ -49,6 +49,17 @@ export function CartProvider({ children }) {
             // Format parsed price to number for calculations
             const cleanPrice = product.price ? parseFloat(product.price.replace(/[^\d]/g, "")) : 0;
 
+            // Trigger Meta Pixel AddToCart
+            if (typeof window !== "undefined" && window.fbq) {
+                window.fbq("track", "AddToCart", {
+                    content_name: product.name,
+                    content_ids: [product.id],
+                    content_type: 'product',
+                    value: cleanPrice * quantity,
+                    currency: 'BDT'
+                });
+            }
+
             // New item
             return [
                 ...prevItems,

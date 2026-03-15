@@ -4,6 +4,8 @@ import Footer from "../components/Footer/Footer";
 import MobileBottomNav from "../components/MobileBottomNav/MobileBottomNav";
 import Providers from "../components/Providers";
 import { getCategoriesFromServer } from "../lib/api";
+import { Suspense } from "react";
+import MetaPixel from "../components/MetaPixel";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -40,6 +42,9 @@ export default async function RootLayout({ children }) {
         <Providers>
           <Header categories={categories} />
           <main className="min-h-screen flex flex-col bg-white">
+            <Suspense fallback={null}>
+              <MetaPixel />
+            </Suspense>
             {children}
           </main>
           <MobileBottomNav />

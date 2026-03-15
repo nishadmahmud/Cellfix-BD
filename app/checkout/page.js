@@ -267,6 +267,17 @@ export default function CheckoutPage() {
             const response = await saveSalesOrder(orderPayload);
 
             if (response.success) {
+                // Trigger Meta Pixel Purchase Event
+                if (typeof window !== "undefined" && window.fbq) {
+                    window.fbq("track", "Purchase", {
+                        value: grandTotal,
+                        currency: 'BDT',
+                        content_ids: cartItems.map(item => item.id),
+                        contents: cartItems.map(item => ({ id: item.id, quantity: item.quantity })),
+                        content_type: 'product'
+                    });
+                }
+
                 clearCart();
                 toast.success("Order placed successfully!");
                 const invoiceId = response.data?.invoice_id || response.invoice_id || "INV-" + Date.now();

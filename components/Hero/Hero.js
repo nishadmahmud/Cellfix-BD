@@ -55,11 +55,16 @@ export default function Hero({ slides: apiSlides = [], banners = [] }) {
         : defaultSlides;
 
     useEffect(() => {
+        if (displaySlides.length === 0) return;
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % displaySlides.length);
         }, 5000);
         return () => clearInterval(timer);
     }, [displaySlides.length]);
+
+    if (displaySlides.length === 0) {
+        return null;
+    }
 
     return (
         <section className="w-full bg-white py-2 md:py-8 px-3 md:px-6">
