@@ -26,6 +26,23 @@ export default function Header({ categories = [] }) {
   const router = useRouter();
   const closeTimeout = useRef(null);
 
+  const repairCategories = useMemo(() => {
+    return categories.filter(cat =>
+      cat.name.toLowerCase().includes('repair') ||
+      cat.name.toLowerCase().includes('unlock')
+    );
+  }, [categories]);
+
+  const shopCategories = useMemo(() => {
+    return categories.filter(cat =>
+      !cat.name.toLowerCase().includes('repair') &&
+      !cat.name.toLowerCase().includes('unlock')
+    );
+  }, [categories]);
+
+  const [isRepairDropdownOpen, setIsRepairDropdownOpen] = useState(false);
+  const [isMobileRepairOpen, setIsMobileRepairOpen] = useState(false);
+
   const handleCatEnter = (idx) => {
     if (closeTimeout.current) {
       clearTimeout(closeTimeout.current);
@@ -56,7 +73,10 @@ export default function Header({ categories = [] }) {
     { name: "Used Phones", slug: "Phones" }
   ];
 
-  const displayCategories = (categories && categories.length > 0 ? categories : defaultCategories).slice(0, 7);
+  const displayCategories = useMemo(() => {
+    const combined = [...shopCategories, ...repairCategories];
+    return combined.length > 0 ? combined : defaultCategories;
+  }, [shopCategories, repairCategories, defaultCategories]);
 
   const handleUserClick = () => {
     if (user) {
@@ -184,7 +204,7 @@ export default function Header({ categories = [] }) {
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-2"><FiPhone className="text-brand-orange" /> +8801714404100</span>
               <span className="opacity-30">|</span>
-              <span className="flex items-center gap-2"><FiMapPin className="text-brand-orange" /> Level-4, Block-C, Shop #35A, Jamuna Future Park, Dhaka</span>
+              <span className="flex items-center gap-2"><FiMapPin className="text-brand-orange" /> Level-4, Block-C, Shop #4C-022B, Jamuna Future Park, Dhaka</span>
             </div>
             <div className="flex gap-4 font-medium">
               <Link href="/track-order" className="text-brand-orange font-bold hover:text-orange-300 transition-colors">Track Order</Link>
@@ -200,11 +220,11 @@ export default function Header({ categories = [] }) {
 
             {/* Logo */}
             <Link href="/" className="flex items-center flex-shrink-0 bg-white rounded-lg px-2 py-1 shadow-sm">
-              <Image 
-                src="/LOGO-Cellfix-BD.png" 
-                alt="CellfixBD Logo" 
-                width={150} 
-                height={40} 
+              <Image
+                src="/LOGO-Cellfix-BD.png"
+                alt="CellfixBD Logo"
+                width={150}
+                height={40}
                 className="h-8 md:h-10 w-auto object-contain"
                 priority
               />
@@ -228,7 +248,40 @@ export default function Header({ categories = [] }) {
             {/* Desktop Nav Links */}
             <nav className="hidden lg:flex gap-8 font-semibold text-white/90">
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <Link href="/services" className="hover:text-white transition-colors">Repair Services</Link>
+              <div className="relative group/repair"
+                onMouseEnter={() => setIsRepairDropdownOpen(true)}
+                onMouseLeave={() => setIsRepairDropdownOpen(false)}
+              >
+                <Link href="/services" className="hover:text-white transition-colors flex items-center gap-1">
+                  Repair Services <FiChevronRight className={`transition-transform duration-200 ${isRepairDropdownOpen ? 'rotate-90' : ''}`} size={14} />
+                </Link>
+
+                {isRepairDropdownOpen && repairCategories.length > 0 && (
+                  <div className="absolute top-full left-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] mt-2">
+                    <div className="px-5 mb-2 border-b border-gray-50 pb-2">
+                      <h3 className="text-[11px] font-black text-brand-orange uppercase tracking-wider">Our Fixes</h3>
+                    </div>
+                    <ul className="max-h-[60vh] overflow-y-auto px-2">
+                      {repairCategories.map(cat => (
+                        <li key={cat.id || cat.category_id}>
+                          <Link
+                            href={cat.sub_category?.length > 0 ? `/services/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}` : `/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
+                            onClick={() => setIsRepairDropdownOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-gray-700 font-semibold rounded-lg hover:bg-orange-50 hover:text-brand-orange transition-all"
+                          >
+                            {cat.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-2 pt-2 border-t border-gray-50 px-4">
+                      <Link href="/services" className="text-xs font-bold text-gray-400 hover:text-brand-orange transition-colors">
+                        View All Services &rarr;
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
               <Link href="/category" className="hover:text-white transition-colors">Shop Gadgets</Link>
             </nav>
 
@@ -382,7 +435,7 @@ export default function Header({ categories = [] }) {
 
         {/* Desktop Category Strip */}
         <div className="hidden md:block bg-white py-3 text-sm border-b border-gray-100 shadow-sm relative z-40">
-          <div 
+          <div
             className="max-w-7xl mx-auto flex flex-wrap gap-2 px-6 items-center"
             onMouseLeave={handleCatLeave}
           >
@@ -397,12 +450,13 @@ export default function Header({ categories = [] }) {
                   onMouseEnter={() => handleCatEnter(idx)}
                 >
                   <Link
-                    href={`/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={`font-semibold text-xs px-4 py-1.5 rounded-full inline-flex items-center gap-1 transition-all duration-200 shadow-sm hover:shadow-md ${
-                      hoveredCatIdx === idx
+                    href={cat.name.toLowerCase().includes('repair') || cat.name.toLowerCase().includes('unlock') 
+                      ? (cat.sub_category?.length > 0 ? `/services/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}` : `/category/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}`)
+                      : `/category/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}`}
+                    className={`font-semibold text-xs px-4 py-1.5 rounded-full inline-flex items-center gap-1 transition-all duration-200 shadow-sm hover:shadow-md ${hoveredCatIdx === idx
                         ? 'bg-brand-orange text-white'
                         : 'bg-brand-orange/90 hover:bg-brand-orange text-white'
-                    }`}
+                      }`}
                   >
                     {cat.name}
                     {hasSubCats && <span className="text-[9px] text-white/70">▾</span>}
@@ -418,7 +472,7 @@ export default function Header({ categories = [] }) {
                 <div className="fixed inset-0 top-[180px] bg-black/10 backdrop-blur-[2px] z-40 pointer-events-none transition-opacity duration-300" />
 
                 {/* Two-panel Mega Menu logic moved outside loop */}
-                <div 
+                <div
                   className="absolute top-full left-0 right-0 z-50 pt-2 px-6"
                   onMouseEnter={handleModalEnter}
                   onMouseLeave={handleCatLeave}
@@ -435,23 +489,24 @@ export default function Header({ categories = [] }) {
                             <li key={sub.id}>
                               <button
                                 onMouseEnter={() => setActiveSubIdx(sIdx)}
-                                onClick={() => { setHoveredCatIdx(null); router.push(`/subcategory/${sub.id}`); }}
-                                className={`w-full text-left px-4 py-2.5 text-[13px] rounded-lg transition-all duration-200 flex justify-between items-center group/item ${
-                                  activeSubIdx === sIdx
+                                onClick={() => {
+                                  const catSlug = displayCategories[hoveredCatIdx].slug || displayCategories[hoveredCatIdx].name.toLowerCase().replace(/\s+/g, '-');
+                                  setHoveredCatIdx(null);
+                                  router.push(`/category/${catSlug}?subcategory=${sub.id}`);
+                                }}
+                                className={`w-full text-left px-4 py-2.5 text-[13px] rounded-lg transition-all duration-200 flex justify-between items-center group/item ${activeSubIdx === sIdx
                                     ? 'bg-brand-orange text-white font-bold shadow-md shadow-brand-orange/20'
                                     : 'text-gray-600 hover:bg-orange-50 hover:text-brand-orange font-medium'
-                                }`}
+                                  }`}
                               >
                                 <span className="truncate">{sub.name}</span>
                                 <div className="flex items-center gap-2">
                                   {sub.child_categories && sub.child_categories.length > 0 && (
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-md flex-shrink-0 transition-colors ${
-                                      activeSubIdx === sIdx ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-400 group-hover/item:bg-brand-orange/10 group-hover/item:text-brand-orange'
-                                    }`}>{sub.child_categories.length}</span>
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-md flex-shrink-0 transition-colors ${activeSubIdx === sIdx ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-400 group-hover/item:bg-brand-orange/10 group-hover/item:text-brand-orange'
+                                      }`}>{sub.child_categories.length}</span>
                                   )}
-                                  <FiChevronRight className={`text-[12px] transition-transform duration-200 ${
-                                    activeSubIdx === sIdx ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0 group-hover/item:translate-x-0 group-hover/item:opacity-100'
-                                  }`} />
+                                  <FiChevronRight className={`text-[12px] transition-transform duration-200 ${activeSubIdx === sIdx ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0 group-hover/item:translate-x-0 group-hover/item:opacity-100'
+                                    }`} />
                                 </div>
                               </button>
                             </li>
@@ -469,7 +524,7 @@ export default function Header({ categories = [] }) {
                                 <p className="text-xs text-gray-400 font-medium">Explore all products in this category</p>
                               </div>
                               <Link
-                                href={`/subcategory/${displayCategories[hoveredCatIdx].sub_category[activeSubIdx].id}`}
+                                href={`/category/${displayCategories[hoveredCatIdx].slug || displayCategories[hoveredCatIdx].name.toLowerCase().replace(/\s+/g, '-')}?subcategory=${displayCategories[hoveredCatIdx].sub_category[activeSubIdx].id}`}
                                 onClick={() => setHoveredCatIdx(null)}
                                 className="px-4 py-2 rounded-full border border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white transition-all duration-300 text-xs font-bold flex items-center gap-2"
                               >
@@ -528,11 +583,11 @@ export default function Header({ categories = [] }) {
         {/* Sidebar Header */}
         <div className="bg-brand-orange p-4 flex justify-between items-center text-white">
           <Link href="/" onClick={closeSidebar} className="bg-white rounded-lg px-2 py-1 shadow-sm">
-            <Image 
-              src="/LOGO-Cellfix-BD.png" 
-              alt="CellfixBD Logo" 
-              width={120} 
-              height={32} 
+            <Image
+              src="/LOGO-Cellfix-BD.png"
+              alt="CellfixBD Logo"
+              width={120}
+              height={32}
               className="h-8 w-auto object-contain"
             />
           </Link>
@@ -574,9 +629,37 @@ export default function Header({ categories = [] }) {
           <Link href="/" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 text-gray-700 font-semibold border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
             <span>Home</span><FiChevronRight size={16} className="text-gray-400" />
           </Link>
-          <Link href="/services" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 text-gray-700 font-semibold border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
-            <span>Repair Services</span><FiChevronRight size={16} className="text-gray-400" />
-          </Link>
+          <div className="flex flex-col border-b border-gray-50">
+            <button
+              onClick={() => setIsMobileRepairOpen(!isMobileRepairOpen)}
+              className="flex items-center justify-between px-5 py-3.5 text-gray-700 font-semibold hover:text-brand-orange hover:bg-orange-50/30"
+            >
+              <span>Repair Services</span>
+              <FiChevronRight size={16} className={`text-gray-400 transition-transform duration-300 ${isMobileRepairOpen ? 'rotate-90' : ''}`} />
+            </button>
+
+            {isMobileRepairOpen && (
+              <div className="bg-gray-50/50 py-1">
+                {repairCategories.map(cat => (
+                  <Link
+                    key={cat.id || cat.category_id}
+                    href={cat.sub_category?.length > 0 ? `/services/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}` : `/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    onClick={closeSidebar}
+                    className="flex items-center justify-between px-8 py-2.5 text-sm text-gray-600 font-medium border-l-2 border-transparent hover:border-brand-orange hover:text-brand-orange transition-all"
+                  >
+                    <span>{cat.name}</span>
+                  </Link>
+                ))}
+                <Link
+                  href="/services"
+                  onClick={closeSidebar}
+                  className="flex items-center px-8 py-2.5 text-xs font-bold text-brand-orange/60 hover:text-brand-orange transition-colors"
+                >
+                  View All Services &rarr;
+                </Link>
+              </div>
+            )}
+          </div>
           <Link href="/shop" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 text-gray-700 font-semibold border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
             <span>Shop Gadgets</span><FiChevronRight size={16} className="text-gray-400" />
           </Link>
@@ -591,7 +674,9 @@ export default function Header({ categories = [] }) {
             {displayCategories.map((cat, idx) => (
               <Link
                 key={cat.id || idx}
-                href={`/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
+                href={cat.name.toLowerCase().includes('repair') || cat.name.toLowerCase().includes('unlock') 
+                  ? (cat.sub_category?.length > 0 ? `/services/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}` : `/category/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}`)
+                  : `/category/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}`}
                 onClick={closeSidebar}
                 className="flex items-center justify-between px-5 py-3 text-sm text-gray-600 border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30"
               >

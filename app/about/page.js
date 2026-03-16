@@ -82,7 +82,7 @@ export default function AboutPage() {
                                 <FiMapPin className="text-brand-orange mt-1 flex-shrink-0" size={20} />
                                 <div>
                                     <p className="font-semibold">Address</p>
-                                    <p className="text-white/70 text-sm">Level-4, Block-C, Shop #35A, Jamuna Future Park, Dhaka-1229</p>
+                                    <p className="text-white/70 text-sm">Level-4, Block-C, Shop #4C-022B, Jamuna Future Park, Dhaka-1229</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">

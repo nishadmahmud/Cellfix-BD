@@ -221,7 +221,7 @@ export default async function Home() {
       <Hero slides={heroSlides} banners={homeBanners} />
       <TrustStats />
       <ShopCategories categories={categories} flashSaleProducts={flashSaleProducts} />
-      <RepairServices />
+      <RepairServices categories={categories} />
       <RepairPricing />
 
       <NewArrivals products={newArrivals} />

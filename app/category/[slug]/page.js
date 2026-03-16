@@ -4,9 +4,10 @@ import { useEffect, useState, useMemo } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getCategoriesFromServer, getCategoryWiseProducts } from '../../../lib/api';
+import { getCategoriesFromServer, getCategoryWiseProducts, getProductsBySubcategory } from '../../../lib/api';
 import CategorySidebar from '../../../components/Category/CategorySidebar';
 import ProductGrid from '../../../components/Category/ProductGrid';
+import { FiGrid } from 'react-icons/fi';
 
 function mapProduct(p) {
     const originalPrice = Number(p.retails_price || 0);
@@ -58,9 +59,18 @@ export default function CategoryPage() {
 
     // Instead of holding 1 page, we hold ALL products for this category.
     const [allProducts, setAllProducts] = useState([]);
+    const [subcategories, setSubcategories] = useState([]);
+    const [selectedSubcatName, setSelectedSubcatName] = useState('');
     const [filterOptions, setFilterOptions] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isProductLoading, setIsProductLoading] = useState(false);
     const [bannerImage, setBannerImage] = useState("https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=2000&auto=format&fit=crop");
+
+    const subcatId = searchParams?.get('subcategory');
+    const isRepairCategory = useMemo(() => {
+        const n = categoryName.toLowerCase();
+        return n.includes('repair') || n.includes('unlock');
+    }, [categoryName]);
 
     // Filter State
     const [selectedBrands, setSelectedBrands] = useState(['All']);
@@ -97,6 +107,12 @@ export default function CategoryPage() {
                         if (isMounted) {
                             setCategoryId(resolvedCatId);
                             if (found.name) setCategoryName(found.name);
+                            setSubcategories(found.sub_category || []);
+
+                            if (subcatId && found.sub_category) {
+                                const sub = found.sub_category.find(s => String(s.id) === String(subcatId));
+                                if (sub) setSelectedSubcatName(sub.name);
+                            }
 
                             // Use banner from API with fallbacks
                             const apiBanner = found.banner || found.banner_image || found.image_path || found.image_url;
@@ -105,24 +121,42 @@ export default function CategoryPage() {
                             }
                         }
                     }
+
+                    // If we have subcategories but NO subcatId selected, we DON'T fetch products yet (show subcat list)
+                    // EXCEPT if it's a repair category (we show products directly there now as per user request)
+                    const n = found?.name?.toLowerCase() || '';
+                    const isRepair = n.includes('repair') || n.includes('unlock');
+
+                    if (!subcatId && found?.sub_category?.length > 0 && !isRepair) {
+                        if (isMounted) {
+                            setAllProducts([]);
+                            setIsLoading(false);
+                        }
+                        return;
+                    }
                 }
             } catch (err) {
                 console.error('Failed to resolve category:', err);
             }
 
             try {
-                // Fetch the FIRST page to get initial data and pagination limits fast
-                const firstPageData = await getCategoryWiseProducts(resolvedCatId, 1);
+                setIsProductLoading(true);
+                // Fetch products based on whether we have a subcategory or just a category
+                const fetchFn = subcatId ? 
+                    () => getProductsBySubcategory(subcatId, 1) : 
+                    () => getCategoryWiseProducts(resolvedCatId, 1);
+                
+                const firstPageData = await fetchFn();
 
                 if (isMounted && firstPageData?.success && Array.isArray(firstPageData.data)) {
-                    // Start rendering first page immediately
                     let globalProductsArray = [...firstPageData.data];
                     setAllProducts(globalProductsArray.map(mapProduct).sort((a, b) => b.stock - a.stock));
 
                     if (firstPageData.filter_options) setFilterOptions(firstPageData.filter_options);
-                    setIsLoading(false); // First render ready!
+                    setIsLoading(false);
+                    setIsProductLoading(false);
 
-                    // Now, fetch all remaining pages in the background
+                    // Fetch remaining pages
                     const totalPages = firstPageData.pagination?.last_page || 1;
                     if (totalPages > 1) {
                         const remainingPagesToFetch = [];
@@ -130,13 +164,11 @@ export default function CategoryPage() {
                             remainingPagesToFetch.push(p);
                         }
 
-                        // We fetch them in chunks of 5 pages directly.
                         for (let i = 0; i < remainingPagesToFetch.length; i += 5) {
-                            if (!isMounted) break; // abort if unmounted
+                            if (!isMounted) break;
                             const chunk = remainingPagesToFetch.slice(i, i + 5);
-
                             const chunkResults = await Promise.allSettled(
-                                chunk.map(page => getCategoryWiseProducts(resolvedCatId, page))
+                                chunk.map(page => subcatId ? getProductsBySubcategory(subcatId, page) : getCategoryWiseProducts(resolvedCatId, page))
                             );
 
                             chunkResults.forEach((res) => {
@@ -145,8 +177,6 @@ export default function CategoryPage() {
                                 }
                             });
 
-                            // Aggressively append the background-fetched products into state 
-                            // so that user doesn't even notice it buffering behind the scenes.
                             if (isMounted) {
                                 setAllProducts([...globalProductsArray].map(mapProduct).sort((a, b) => b.stock - a.stock));
                             }
@@ -154,17 +184,21 @@ export default function CategoryPage() {
                     }
                 } else if (isMounted) {
                     setIsLoading(false);
+                    setIsProductLoading(false);
                 }
             } catch (err) {
                 console.error('Failed to fetch category products:', err);
-                if (isMounted) setIsLoading(false);
+                if (isMounted) {
+                    setIsLoading(false);
+                    setIsProductLoading(false);
+                }
             }
         };
 
         if (rawSlug) fetchCategoryData();
 
         return () => { isMounted = false; };
-    }, [rawSlug]); // Notice 'currentPage/urlPage' is not here: it only fetches on component mount/category change
+    }, [rawSlug, subcatId]); // Re-fetch when slug OR subcat query changes
 
     // Compute dynamic filter lists using ALL background-fetched products + Server rules.
     const derivedFilters = useMemo(() => {
@@ -313,9 +347,19 @@ export default function CategoryPage() {
                 <div className="text-[12px] md:text-sm text-gray-500 mb-6 md:mb-10 flex items-center gap-2 font-medium">
                     <Link href="/" className="hover:text-brand-orange transition-colors">Home</Link>
                     <span>/</span>
-                    <span className="hover:text-brand-orange transition-colors cursor-pointer">Categories</span>
+                    <Link href={isRepairCategory ? "/services" : "/category"} className="hover:text-brand-orange transition-colors">
+                        {isRepairCategory ? "Services" : "Shop"}
+                    </Link>
                     <span>/</span>
-                    <span className="text-brand-orange font-bold capitalize">{categoryName}</span>
+                    <Link href={`/category/${rawSlug}`} className={`hover:text-brand-orange transition-colors capitalize ${!subcatId ? 'text-brand-orange font-bold' : ''}`}>
+                        {categoryName}
+                    </Link>
+                    {subcatId && (
+                        <>
+                            <span>/</span>
+                            <span className="text-brand-orange font-bold">{selectedSubcatName || 'Model'}</span>
+                        </>
+                    )}
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-0 lg:gap-8 pt-2 lg:pt-0">
@@ -341,35 +385,62 @@ export default function CategoryPage() {
                         />
                     </aside>
 
-                    {/* Main Content (Product Grid) - Right Side on Desktop */}
+                    {/* Main Content Area */}
                     <main className="lg:w-3/4 order-2">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-gray-200 border-dashed">
                                 <div className="w-8 h-8 border-4 border-brand-orange/20 border-t-brand-orange rounded-full animate-spin mb-4"></div>
-                                <p className="text-gray-400 font-medium">Loading products...</p>
+                                <p className="text-gray-400 font-medium">Loading...</p>
+                            </div>
+                        ) : !subcatId && subcategories.length > 0 && !isRepairCategory ? (
+                            /* Subcategory Grid - Only for non-repair categories */
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <h2 className="text-xl md:text-2xl font-black text-gray-900 mb-8 flex items-center gap-3">
+                                    <span className="w-2 h-8 bg-brand-orange rounded-full"></span>
+                                    Select Your Model
+                                </h2>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+                                    {subcategories.map((sub) => (
+                                        <Link
+                                            key={sub.id}
+                                            href={`/category/${rawSlug}?subcategory=${sub.id}`}
+                                            className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-brand-orange/30 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center"
+                                        >
+                                            <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-50 rounded-xl flex items-center justify-center text-2xl md:text-3xl text-gray-400 group-hover:text-brand-orange group-hover:bg-orange-50 transition-all duration-300 mb-4 shadow-sm">
+                                                <FiGrid />
+                                            </div>
+                                            <h3 className="text-sm md:text-base font-bold text-gray-800 group-hover:text-brand-orange transition-colors line-clamp-2">
+                                                {sub.name}
+                                            </h3>
+                                            <span className="mt-3 text-[10px] md:text-xs font-bold text-brand-orange opacity-0 group-hover:opacity-100 transition-opacity">
+                                                See Repairs &rarr;
+                                            </span>
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
                         ) : paginatedProductsForScreen.length > 0 ? (
                             <ProductGrid
                                 products={paginatedProductsForScreen}
                                 onOpenFilter={() => setIsMobileFilterOpen(true)}
-                                categoryName={categoryName}
+                                categoryName={subcatId ? selectedSubcatName : categoryName}
                                 brandsList={derivedFilters.brandsList}
                                 activeBrand={selectedBrands[0] || 'All'}
                                 onSelectBrand={(b) => setSelectedBrands([b])}
                             />
                         ) : (
                             <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl border border-gray-200 border-dashed">
-                                <p className="text-gray-400 font-medium">No products match your filters.</p>
+                                <p className="text-gray-400 font-medium">
+                                    {isProductLoading ? 'Searching for products...' : 'No products found here yet.'}
+                                </p>
                             </div>
                         )}
 
-                        {/* Pagination Overlay logic is now entirely Client-side aware */}
-                        {!isLoading && totalPages > 1 && (
+                        {/* Pagination */}
+                        {!isLoading && !isProductLoading && totalPages > 1 && (
                             <div className="flex flex-wrap items-center justify-center gap-2 mt-10">
                                 {Array.from({ length: totalPages }, (_, i) => {
                                     let pageNum = i + 1;
-
-                                    // Basic slicing window to prevent hundred page spans wrapping.
                                     if (totalPages > 6) {
                                         if (pageNum < validCurrentPage - 2 && pageNum !== 1) return null;
                                         if (pageNum > validCurrentPage + 2 && pageNum !== totalPages) return null;
@@ -380,7 +451,7 @@ export default function CategoryPage() {
                                     return (
                                         <Link
                                             key={pageNum}
-                                            href={`/category/${rawSlug}?page=${pageNum}`}
+                                            href={`/category/${rawSlug}?page=${pageNum}${subcatId ? `&subcategory=${subcatId}` : ''}`}
                                             scroll={true}
                                             className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${pageNum === validCurrentPage
                                                 ? 'bg-brand-orange text-white shadow-md'

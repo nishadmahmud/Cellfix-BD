@@ -6,6 +6,7 @@ import Providers from "../components/Providers";
 import { getCategoriesFromServer } from "../lib/api";
 import { Suspense } from "react";
 import MetaPixel from "../components/MetaPixel";
+import WhatsAppButton from "../components/Shared/WhatsAppButton";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -48,6 +49,7 @@ export default async function RootLayout({ children }) {
             {children}
           </main>
           <MobileBottomNav />
+          <WhatsAppButton />
           <Footer />
         </Providers>
       </body>

@@ -35,7 +35,7 @@ export default function ContactPage() {
                     {/* Contact Info */}
                     <div className="lg:col-span-2 space-y-4">
                         {[
-                            { icon: <FiMapPin size={20} />, title: "Visit Us", text: "Level-4, Block-C, Shop #35A,\nJamuna Future Park, Dhaka-1229" },
+                            { icon: <FiMapPin size={20} />, title: "Visit Us", text: "Level-4, Block-C, Shop #4C-022B,\nJamuna Future Park, Dhaka-1229" },
                             { icon: <FiPhone size={20} />, title: "Call Us", text: "+880 1714-404100", href: "tel:+8801714404100" },
                             { icon: <FiMail size={20} />, title: "Email Us", text: "support@cellfixbd.com", href: "mailto:support@cellfixbd.com" },
                             { icon: <FiClock size={20} />, title: "Business Hours", text: "Sat–Thu: 10 AM – 9 PM\nFri: 2 PM – 9 PM" },

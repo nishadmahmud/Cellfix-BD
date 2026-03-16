@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { FiShare2, FiMinus, FiPlus } from 'react-icons/fi';
 import { FaStar } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
 
 export default function ProductInfo({ product, onVariantImageChange }) {
-    const { addToCart } = useCart();
+    const { addToCart, closeCart } = useCart();
+    const router = useRouter();
     const [quantity, setQuantity] = useState(1);
 
     const imeis = product.rawImeis || [];
@@ -167,6 +169,17 @@ export default function ProductInfo({ product, onVariantImageChange }) {
         if (selectedRegion) variants.region = selectedRegion;
 
         addToCart(product, quantity, Object.keys(variants).length > 0 ? variants : null);
+    };
+
+    const handleBuyNow = () => {
+        const variants = {};
+        if (selectedStorage) variants.storage = selectedStorage;
+        if (selectedColor) variants.colors = { name: selectedColor };
+        if (selectedRegion) variants.region = selectedRegion;
+
+        addToCart(product, quantity, Object.keys(variants).length > 0 ? variants : null);
+        closeCart(); // Close sidebar if it was opened by addToCart
+        router.push('/checkout');
     };
 
     return (
@@ -338,7 +351,7 @@ export default function ProductInfo({ product, onVariantImageChange }) {
                 </button>
 
                 <button
-                    onClick={handleAddToCart}
+                    onClick={handleBuyNow}
                     className="cursor-pointer flex-[1.5] bg-brand-orange text-white font-bold py-3 px-2 rounded-lg hover:opacity-90 shadow-lg shadow-brand-orange/30 transition-all text-sm whitespace-nowrap"
                 >
                     Buy Now

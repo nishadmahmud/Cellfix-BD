@@ -13,11 +13,11 @@ export default function Footer() {
                     {/* Brand & Contact */}
                     <div className="flex flex-col gap-3 md:gap-6 col-span-2 sm:col-span-1">
                         <Link href="/" className="inline-block bg-white rounded-lg px-2 py-1 shadow-sm w-fit">
-                            <Image 
-                                src="/LOGO-Cellfix-BD.png" 
-                                alt="CellfixBD Logo" 
-                                width={140} 
-                                height={38} 
+                            <Image
+                                src="/LOGO-Cellfix-BD.png"
+                                alt="CellfixBD Logo"
+                                width={140}
+                                height={38}
                                 className="h-8 md:h-10 w-auto object-contain"
                             />
                         </Link>
@@ -27,7 +27,7 @@ export default function Footer() {
                         <div className="flex flex-col gap-1.5 md:gap-2 text-[10px] md:text-sm text-white/90">
                             <p className="flex gap-1 md:gap-2">
                                 <strong className="text-white">Address:</strong>
-                                <span>Level-4, Block-C, Shop #35A, Jamuna Future Park</span>
+                                <span>Level-4, Block-C, Shop #4C-022B, Jamuna Future Park</span>
                             </p>
                             <p className="flex gap-1 md:gap-2">
                                 <strong className="text-white">Phone:</strong>
