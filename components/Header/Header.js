@@ -199,10 +199,15 @@ export default function Header({ categories = [] }) {
           <div className="max-w-7xl mx-auto flex justify-between items-center px-3 md:px-6 gap-2 md:gap-4">
 
             {/* Logo */}
-            <Link href="/" className="flex items-center flex-shrink-0">
-              <span className="text-xl md:text-3xl font-extrabold text-white tracking-tight">
-                Cellfix<span className="text-brand-blue">BD</span>
-              </span>
+            <Link href="/" className="flex items-center flex-shrink-0 bg-white rounded-lg px-2 py-1 shadow-sm">
+              <Image 
+                src="/LOGO-Cellfix-BD.png" 
+                alt="CellfixBD Logo" 
+                width={150} 
+                height={40} 
+                className="h-8 md:h-10 w-auto object-contain"
+                priority
+              />
             </Link>
 
             {/* Global Search Bar (Mobile & Desktop) */}
@@ -522,7 +527,15 @@ export default function Header({ categories = [] }) {
 
         {/* Sidebar Header */}
         <div className="bg-brand-orange p-4 flex justify-between items-center text-white">
-          <span className="text-2xl font-extrabold tracking-tight">Cellfix<span className="text-brand-blue">BD</span></span>
+          <Link href="/" onClick={closeSidebar} className="bg-white rounded-lg px-2 py-1 shadow-sm">
+            <Image 
+              src="/LOGO-Cellfix-BD.png" 
+              alt="CellfixBD Logo" 
+              width={120} 
+              height={32} 
+              className="h-8 w-auto object-contain"
+            />
+          </Link>
           <button onClick={closeSidebar} className="p-2 hover:bg-white/20 rounded-full transition-colors">
             <FiX size={24} />
           </button>

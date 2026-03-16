@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa';
 
 export default function Footer() {
@@ -11,10 +12,14 @@ export default function Footer() {
 
                     {/* Brand & Contact */}
                     <div className="flex flex-col gap-3 md:gap-6 col-span-2 sm:col-span-1">
-                        <Link href="/" className="inline-block">
-                            <span className="text-xl md:text-3xl font-extrabold text-white tracking-tight">
-                                Cellfix<span className="text-brand-blue">BD</span>
-                            </span>
+                        <Link href="/" className="inline-block bg-white rounded-lg px-2 py-1 shadow-sm w-fit">
+                            <Image 
+                                src="/LOGO-Cellfix-BD.png" 
+                                alt="CellfixBD Logo" 
+                                width={140} 
+                                height={38} 
+                                className="h-8 md:h-10 w-auto object-contain"
+                            />
                         </Link>
                         <p className="text-[10px] md:text-sm leading-relaxed text-white/80">
                             Bangladesh's most trusted mobile repair service and premium accessories shop.
