@@ -60,12 +60,10 @@ export default async function ServicesPage() {
         {repairCategories.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
             {repairCategories.map((cat) => {
-              // Decide where clicking this takes us
-              // If it HAS subcategories -> go to /services/[slug] (new page we will create)
-              // If NO subcategories -> go directly to /category/[slug] (shows products)
+              // Always route repair categories to /services/[slug].
               const hasSubcats = cat.sub_category && cat.sub_category.length > 0;
               const catSlug = cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-');
-              const linkTarget = hasSubcats ? `/services/${catSlug}` : `/category/${catSlug}`;
+              const linkTarget = `/services/${catSlug}`;
 
               return (
                 <Link 
@@ -84,7 +82,7 @@ export default async function ServicesPage() {
                   </h3>
                   
                   <div className="mt-4 flex items-center gap-1 text-[10px] md:text-sm font-bold text-gray-400 group-hover:text-brand-orange transition-all duration-300 uppercase tracking-widest relative z-10">
-                    {hasSubcats ? 'Select Model' : 'View Repairs'} <BsChevronRight className="group-hover:translate-x-1 transition-transform" />
+                    {hasSubcats ? 'Select Model' : 'No Service Available'} <BsChevronRight className="group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
               );

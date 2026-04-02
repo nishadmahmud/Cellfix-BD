@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getCategoriesFromServer } from '../../../lib/api';
 import { BsTools, BsPhone, BsCpu, BsSmartwatch, BsLaptop, BsUnlock, BsTablet, BsChevronRight } from 'react-icons/bs';
 import { redirect } from 'next/navigation';
+import { IPHONE_MODELS } from '../../../lib/repairMenuData';
 
 const getIcon = (name) => {
   const n = name.toLowerCase();
@@ -61,10 +62,22 @@ export default async function ServicesSubcategoryPage({ params }) {
       redirect('/services');
   }
 
-  
-  if (!category.sub_category || category.sub_category.length === 0) {
-      redirect(`/category/${slug}`);
-  }
+  const isIphoneRepairCategory =
+    category.name?.toLowerCase().includes('iphone') ||
+    decodedSlug.includes('iphone');
+  const hasSubcategories = Array.isArray(category.sub_category) && category.sub_category.length > 0;
+  const hasModelList = isIphoneRepairCategory || hasSubcategories;
+  const modelItems = isIphoneRepairCategory
+    ? IPHONE_MODELS.map((model) => ({
+        id: model.slug,
+        name: model.name,
+        href: `/services/${slug}/${model.slug}`,
+      }))
+    : category.sub_category.map((sub) => ({
+        id: sub.id,
+        name: sub.name,
+        href: `/category/${slug}?subcategory=${sub.id}`,
+      }));
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -91,32 +104,58 @@ export default async function ServicesSubcategoryPage({ params }) {
 
       {/* Models Grid */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20">
-        <div className="mb-10 text-center md:text-left">
-            <h2 className="text-xl md:text-3xl font-extrabold text-gray-900 mb-3">Select Your Device</h2>
-            <p className="text-gray-500 font-medium">Choose your model to view available repair options and pricing.</p>
-        </div>
+        {hasModelList ? (
+          <>
+            <div className="mb-10 text-center md:text-left">
+              <h2 className="text-xl md:text-3xl font-extrabold text-gray-900 mb-3">Select Your Device</h2>
+              <p className="text-gray-500 font-medium">
+                {isIphoneRepairCategory
+                  ? 'Choose your iPhone model to view the full repair menu and pricing.'
+                  : 'Choose your model to view available repair options and pricing.'}
+              </p>
+            </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-          {category.sub_category.map((sub) => (
-            <Link 
-              key={sub.id}
-              href={`/category/${slug}?subcategory=${sub.id}`}
-              className="group bg-white rounded-2xl p-6 md:p-8 border border-gray-100 hover:border-brand-orange/30 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden"
-            >
-              <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-50 rounded-full flex items-center justify-center text-2xl md:text-3xl text-gray-400 mb-4 group-hover:bg-orange-50 group-hover:text-brand-orange transition-colors duration-300">
-                {getIcon(category.name)}
-              </div>
-              
-              <h3 className="text-sm md:text-base font-bold text-gray-800 group-hover:text-brand-orange transition-colors mb-2 line-clamp-2">
-                {sub.name}
-              </h3>
-              
-              <div className="mt-auto pt-4 w-full flex items-center justify-center gap-1 text-[10px] md:text-xs font-bold text-brand-orange opacity-0 group-hover:opacity-100 transition-opacity duration-300 uppercase tracking-wider">
-                View Repairs <BsChevronRight size={10} />
-              </div>
-            </Link>
-          ))}
-        </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+              {modelItems.map((item) => (
+                <Link 
+                  key={item.id}
+                  href={item.href}
+                  className="group bg-white rounded-2xl p-6 md:p-8 border border-gray-100 hover:border-brand-orange/30 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden"
+                >
+                  <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-50 rounded-full flex items-center justify-center text-2xl md:text-3xl text-gray-400 mb-4 group-hover:bg-orange-50 group-hover:text-brand-orange transition-colors duration-300">
+                    {getIcon(category.name)}
+                  </div>
+                  
+                  <h3 className="text-sm md:text-base font-bold text-gray-800 group-hover:text-brand-orange transition-colors mb-2 line-clamp-2">
+                    {item.name}
+                  </h3>
+                  
+                  <div className="mt-auto pt-4 w-full flex items-center justify-center gap-1 text-[10px] md:text-xs font-bold text-brand-orange opacity-0 group-hover:opacity-100 transition-opacity duration-300 uppercase tracking-wider">
+                    View Services <BsChevronRight size={10} />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-16 bg-white rounded-3xl border border-gray-100 shadow-sm">
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center text-4xl text-gray-300 mx-auto mb-6 shadow-inner">
+              <BsTools />
+            </div>
+            <h2 className="text-2xl font-black text-gray-900">No service available for this category.</h2>
+            <p className="text-gray-500 mt-3 max-w-md mx-auto font-medium">
+              We currently do not have model-wise services listed for {category.name}. Please check again later.
+            </p>
+            <div className="mt-6">
+              <Link
+                href="/services"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white transition-colors text-sm font-bold"
+              >
+                Back to Services <BsChevronRight size={12} />
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

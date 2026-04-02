@@ -3,7 +3,7 @@ import TrustStats from "../components/TrustStats/TrustStats";
 import RepairServices from "../components/RepairServices/RepairServices";
 import RepairPricing from "../components/RepairPricing/RepairPricing";
 import HowItWorks from "../components/HowItWorks/HowItWorks";
-import ShopCategories from "../components/ShopCategories/ShopCategories";
+// import ShopCategories from "../components/ShopCategories/ShopCategories";
 import NewArrivals from "../components/NewArrivals/NewArrivals";
 import DiscountedParts from "../components/DiscountedParts/DiscountedParts";
 import FeaturedProducts from "../components/FeaturedProducts/FeaturedProducts";
@@ -220,7 +220,7 @@ export default async function Home() {
     <>
       <Hero slides={heroSlides} banners={homeBanners} />
       <TrustStats />
-      <ShopCategories categories={categories} flashSaleProducts={flashSaleProducts} />
+      {/* <ShopCategories categories={categories} flashSaleProducts={flashSaleProducts} /> */}
       <RepairServices categories={categories} />
       <RepairPricing />
 

@@ -265,7 +265,7 @@ export default function Header({ categories = [] }) {
                       {repairCategories.map(cat => (
                         <li key={cat.id || cat.category_id}>
                           <Link
-                            href={cat.sub_category?.length > 0 ? `/services/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}` : `/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
+                            href={`/services/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
                             onClick={() => setIsRepairDropdownOpen(false)}
                             className="block px-4 py-2.5 text-sm text-gray-700 font-semibold rounded-lg hover:bg-orange-50 hover:text-brand-orange transition-all"
                           >
@@ -451,7 +451,7 @@ export default function Header({ categories = [] }) {
                 >
                   <Link
                     href={cat.name.toLowerCase().includes('repair') || cat.name.toLowerCase().includes('unlock') 
-                      ? (cat.sub_category?.length > 0 ? `/services/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}` : `/category/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}`)
+                      ? `/services/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}`
                       : `/category/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}`}
                     className={`font-semibold text-xs px-4 py-1.5 rounded-full inline-flex items-center gap-1 transition-all duration-200 shadow-sm hover:shadow-md ${hoveredCatIdx === idx
                         ? 'bg-brand-orange text-white'
@@ -643,7 +643,7 @@ export default function Header({ categories = [] }) {
                 {repairCategories.map(cat => (
                   <Link
                     key={cat.id || cat.category_id}
-                    href={cat.sub_category?.length > 0 ? `/services/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}` : `/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    href={`/services/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
                     onClick={closeSidebar}
                     className="flex items-center justify-between px-8 py-2.5 text-sm text-gray-600 font-medium border-l-2 border-transparent hover:border-brand-orange hover:text-brand-orange transition-all"
                   >
@@ -675,7 +675,7 @@ export default function Header({ categories = [] }) {
               <Link
                 key={cat.id || idx}
                 href={cat.name.toLowerCase().includes('repair') || cat.name.toLowerCase().includes('unlock') 
-                  ? (cat.sub_category?.length > 0 ? `/services/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}` : `/category/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}`)
+                  ? `/services/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}`
                   : `/category/${cat.slug || cat.name.toLowerCase().split(' ').join('-')}`}
                 onClick={closeSidebar}
                 className="flex items-center justify-between px-5 py-3 text-sm text-gray-600 border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30"

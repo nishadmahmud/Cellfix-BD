@@ -44,7 +44,7 @@ export default function RepairServices({ categories = [] }) {
                         {repairCategories.map((cat) => {
                             const hasSubcats = cat.sub_category && cat.sub_category.length > 0;
                             const catSlug = cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-');
-                            const linkTarget = hasSubcats ? `/services/${catSlug}` : `/category/${catSlug}`;
+                            const linkTarget = `/services/${catSlug}`;
 
                             return (
                                 <Link 
@@ -63,7 +63,7 @@ export default function RepairServices({ categories = [] }) {
                                     </h3>
                                     
                                     <div className="mt-4 flex items-center gap-1 text-[10px] md:text-sm font-bold text-gray-400 group-hover:text-brand-orange transition-all duration-300 uppercase tracking-widest relative z-10">
-                                        {hasSubcats ? 'Select Model' : 'View Repairs'} <BsChevronRight className="group-hover:translate-x-1 transition-transform" />
+                                        {hasSubcats ? 'Select Model' : 'No Service Available'} <BsChevronRight className="group-hover:translate-x-1 transition-transform" />
                                     </div>
                                 </Link>
                             );
