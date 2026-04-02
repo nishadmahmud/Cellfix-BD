@@ -83,6 +83,17 @@ export default function Footer() {
             <div className="border-t border-white/10 bg-gray-900">
                 <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-6 flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4 text-[9px] md:text-xs font-medium text-gray-400">
                     <p>&copy; {new Date().getFullYear()} Cellfix BD. All rights reserved.</p>
+                    <p>
+                        Developed by{' '}
+                        <a
+                            href="https://www.squadinnovators.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-white transition-colors"
+                        >
+                            Squad Innovetors
+                        </a>
+                    </p>
                     <div className="flex gap-4 md:gap-6">
                         <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
                         <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
