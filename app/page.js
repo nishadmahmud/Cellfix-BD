@@ -68,8 +68,12 @@ export default async function Home() {
     }
 
     if (sliderRes?.success && Array.isArray(sliderRes?.sliders) && sliderRes.sliders.length > 0) {
-      const images = sliderRes.sliders[0].image_path || [];
-      heroSlides = images.map((img, idx) => ({ id: idx, image: img }));
+      heroSlides = sliderRes.sliders
+        .filter((s) => s?.status === 1 && s?.image_path)
+        .map((s, idx) => ({
+          id: s.id ?? idx,
+          image: s.image_path,
+        }));
     }
 
     if (arrivalRes?.success && Array.isArray(arrivalRes?.data?.data)) {
