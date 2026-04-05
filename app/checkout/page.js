@@ -320,7 +320,7 @@ export default function CheckoutPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 ios-no-zoom-scope">
             <div className="pt-0 lg:pt-8 pb-[120px] md:pb-12">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 

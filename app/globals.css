@@ -50,3 +50,12 @@ body {
 *::-webkit-scrollbar-thumb:hover {
   background: #E64500;
 }
+
+/* Prevent iOS Safari input zoom on focus for scoped screens. */
+@media (max-width: 768px) {
+  .ios-no-zoom-scope input,
+  .ios-no-zoom-scope select,
+  .ios-no-zoom-scope textarea {
+    font-size: 16px !important;
+  }
+}
