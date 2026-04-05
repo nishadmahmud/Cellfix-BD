@@ -48,7 +48,7 @@ export default async function Home() {
     const [
       catRes, sliderRes, arrivalRes, sellerRes, dealsRes, blogRes, bannerRes
     ] = await Promise.all([
-      getCategoriesFromServer().catch(() => null),
+      getCategoriesFromServer({ noStore: true }).catch(() => null),
       getSlidersFromServer().catch(() => null),
       getNewArrivalsFromServer().catch(() => null),
       getBestSellersFromServer().catch(() => null),

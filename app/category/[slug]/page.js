@@ -85,7 +85,25 @@ export default function CategoryPage() {
 
         const fetchCategoryData = async () => {
             setIsLoading(true);
+            setIsProductLoading(true);
             let resolvedCatId = rawSlug;
+            const firstPageForSubcatPromise = subcatId
+                ? getProductsBySubcategory(subcatId, 1).catch(() => null)
+                : null;
+            let prefetchedFirstPageData = null;
+
+            // Fast path for subcategory navigation:
+            // render first-page products immediately instead of waiting for category metadata.
+            if (firstPageForSubcatPromise) {
+                prefetchedFirstPageData = await firstPageForSubcatPromise;
+                if (isMounted && prefetchedFirstPageData?.success && Array.isArray(prefetchedFirstPageData.data)) {
+                    const mappedFirstPage = prefetchedFirstPageData.data.map(mapProduct).sort((a, b) => b.stock - a.stock);
+                    setAllProducts(mappedFirstPage);
+                    if (prefetchedFirstPageData.filter_options) setFilterOptions(prefetchedFirstPageData.filter_options);
+                    setIsLoading(false);
+                    setIsProductLoading(false);
+                }
+            }
 
             try {
                 const catRes = await getCategoriesFromServer();
@@ -131,6 +149,7 @@ export default function CategoryPage() {
                         if (isMounted) {
                             setAllProducts([]);
                             setIsLoading(false);
+                            setIsProductLoading(false);
                         }
                         return;
                     }
@@ -140,17 +159,17 @@ export default function CategoryPage() {
             }
 
             try {
-                setIsProductLoading(true);
                 // Fetch products based on whether we have a subcategory or just a category
-                const fetchFn = subcatId ? 
-                    () => getProductsBySubcategory(subcatId, 1) : 
-                    () => getCategoryWiseProducts(resolvedCatId, 1);
-                
-                const firstPageData = await fetchFn();
+                const firstPageData = prefetchedFirstPageData || (
+                    firstPageForSubcatPromise
+                        ? await firstPageForSubcatPromise
+                        : await getCategoryWiseProducts(resolvedCatId, 1)
+                );
 
                 if (isMounted && firstPageData?.success && Array.isArray(firstPageData.data)) {
                     let globalProductsArray = [...firstPageData.data];
-                    setAllProducts(globalProductsArray.map(mapProduct).sort((a, b) => b.stock - a.stock));
+                    const mappedFirstPage = globalProductsArray.map(mapProduct).sort((a, b) => b.stock - a.stock);
+                    setAllProducts(mappedFirstPage);
 
                     if (firstPageData.filter_options) setFilterOptions(firstPageData.filter_options);
                     setIsLoading(false);
@@ -164,6 +183,7 @@ export default function CategoryPage() {
                             remainingPagesToFetch.push(p);
                         }
 
+                        const additionalRawProducts = [];
                         for (let i = 0; i < remainingPagesToFetch.length; i += 5) {
                             if (!isMounted) break;
                             const chunk = remainingPagesToFetch.slice(i, i + 5);
@@ -173,13 +193,14 @@ export default function CategoryPage() {
 
                             chunkResults.forEach((res) => {
                                 if (res.status === 'fulfilled' && res.value?.success && Array.isArray(res.value.data)) {
-                                    globalProductsArray.push(...res.value.data);
+                                    additionalRawProducts.push(...res.value.data);
                                 }
                             });
+                        }
 
-                            if (isMounted) {
-                                setAllProducts([...globalProductsArray].map(mapProduct).sort((a, b) => b.stock - a.stock));
-                            }
+                        if (isMounted && additionalRawProducts.length > 0) {
+                            globalProductsArray.push(...additionalRawProducts);
+                            setAllProducts(globalProductsArray.map(mapProduct).sort((a, b) => b.stock - a.stock));
                         }
                     }
                 } else if (isMounted) {
@@ -394,7 +415,7 @@ export default function CategoryPage() {
                             </div>
                         ) : !subcatId && subcategories.length > 0 && !isRepairCategory ? (
                             /* Subcategory Grid - Only for non-repair categories */
-                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div>
                                 <h2 className="text-xl md:text-2xl font-black text-gray-900 mb-8 flex items-center gap-3">
                                     <span className="w-2 h-8 bg-brand-orange rounded-full"></span>
                                     Select Your Model
@@ -404,9 +425,9 @@ export default function CategoryPage() {
                                         <Link
                                             key={sub.id}
                                             href={`/category/${rawSlug}?subcategory=${sub.id}`}
-                                            className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-brand-orange/30 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center"
+                                            className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-brand-orange/20 shadow-sm hover:shadow-lg transition-all duration-150 flex flex-col items-center text-center"
                                         >
-                                            <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-50 rounded-xl flex items-center justify-center text-2xl md:text-3xl text-gray-400 group-hover:text-brand-orange group-hover:bg-orange-50 transition-all duration-300 mb-4 shadow-sm">
+                                            <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-50 rounded-xl flex items-center justify-center text-2xl md:text-3xl text-gray-400 group-hover:text-brand-orange group-hover:bg-orange-50 transition-colors duration-150 mb-4 shadow-sm">
                                                 <FiGrid />
                                             </div>
                                             <h3 className="text-sm md:text-base font-bold text-gray-800 group-hover:text-brand-orange transition-colors line-clamp-2">

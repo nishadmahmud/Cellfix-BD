@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { getCategoriesFromServer } from '../../../lib/api';
 import { BsTools, BsPhone, BsCpu, BsSmartwatch, BsLaptop, BsUnlock, BsTablet, BsChevronRight } from 'react-icons/bs';
 import { redirect } from 'next/navigation';
-import { IPHONE_MODELS } from '../../../lib/repairMenuData';
 
 const getIcon = (name) => {
   const n = name.toLowerCase();
@@ -62,22 +61,12 @@ export default async function ServicesSubcategoryPage({ params }) {
       redirect('/services');
   }
 
-  const isIphoneRepairCategory =
-    category.name?.toLowerCase().includes('iphone') ||
-    decodedSlug.includes('iphone');
   const hasSubcategories = Array.isArray(category.sub_category) && category.sub_category.length > 0;
-  const hasModelList = isIphoneRepairCategory || hasSubcategories;
-  const modelItems = isIphoneRepairCategory
-    ? IPHONE_MODELS.map((model) => ({
-        id: model.slug,
-        name: model.name,
-        href: `/services/${slug}/${model.slug}`,
-      }))
-    : category.sub_category.map((sub) => ({
-        id: sub.id,
-        name: sub.name,
-        href: `/category/${slug}?subcategory=${sub.id}`,
-      }));
+  const modelItems = category.sub_category.map((sub) => ({
+    id: sub.id,
+    name: sub.name,
+    href: `/category/${slug}?subcategory=${sub.id}`,
+  }));
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -104,15 +93,11 @@ export default async function ServicesSubcategoryPage({ params }) {
 
       {/* Models Grid */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20">
-        {hasModelList ? (
+        {hasSubcategories ? (
           <>
             <div className="mb-10 text-center md:text-left">
               <h2 className="text-xl md:text-3xl font-extrabold text-gray-900 mb-3">Select Your Device</h2>
-              <p className="text-gray-500 font-medium">
-                {isIphoneRepairCategory
-                  ? 'Choose your iPhone model to view the full repair menu and pricing.'
-                  : 'Choose your model to view available repair options and pricing.'}
-              </p>
+              <p className="text-gray-500 font-medium">Choose your model to view available repair options and pricing.</p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">

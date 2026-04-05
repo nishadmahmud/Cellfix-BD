@@ -237,7 +237,7 @@ export default function Header({ categories = [] }) {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search gadget"
+                placeholder="Search product"
                 className="flex-grow bg-transparent border-none outline-none text-[13px] md:text-sm text-gray-800 min-w-0"
               />
               <button type="submit" className="text-gray-400 hover:text-brand-orange transition-colors flex items-center justify-center p-1 flex-shrink-0 border-l border-gray-200 ml-2 pl-2 md:border-none md:ml-0 md:pl-0">
@@ -253,7 +253,7 @@ export default function Header({ categories = [] }) {
                 onMouseLeave={() => setIsRepairDropdownOpen(false)}
               >
                 <Link href="/services" className="hover:text-white transition-colors flex items-center gap-1">
-                  Repair Services <FiChevronRight className={`transition-transform duration-200 ${isRepairDropdownOpen ? 'rotate-90' : ''}`} size={14} />
+                  Repair <FiChevronRight className={`transition-transform duration-200 ${isRepairDropdownOpen ? 'rotate-90' : ''}`} size={14} />
                 </Link>
 
                 {isRepairDropdownOpen && repairCategories.length > 0 && (
@@ -634,7 +634,7 @@ export default function Header({ categories = [] }) {
               onClick={() => setIsMobileRepairOpen(!isMobileRepairOpen)}
               className="flex items-center justify-between px-5 py-3.5 text-gray-700 font-semibold hover:text-brand-orange hover:bg-orange-50/30"
             >
-              <span>Repair Services</span>
+              <span>Repair</span>
               <FiChevronRight size={16} className={`text-gray-400 transition-transform duration-300 ${isMobileRepairOpen ? 'rotate-90' : ''}`} />
             </button>
 
