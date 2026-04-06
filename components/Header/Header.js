@@ -216,7 +216,7 @@ export default function Header({ categories = [] }) {
 
         {/* Main Navigation */}
         <div className="bg-brand-orange py-2 md:py-4 relative">
-          <div className="max-w-7xl mx-auto flex justify-between items-center px-3 md:px-6 gap-2 md:gap-4">
+          <div className="max-w-7xl mx-auto flex justify-between items-center px-3 md:px-6 gap-2 md:gap-4 min-w-0">
 
             {/* Logo */}
             <Link href="/" className="flex items-center flex-shrink-0 bg-white rounded-lg px-2 py-1 shadow-sm">
@@ -231,15 +231,16 @@ export default function Header({ categories = [] }) {
             </Link>
 
             {/* Global Search Bar (Mobile & Desktop) */}
-            <form onSubmit={handleSearchSubmit} className="flex-grow flex items-center bg-gray-50 md:bg-white rounded-full px-3 md:px-4 py-1.5 md:py-2 shadow-sm focus-within:ring-2 focus-within:ring-white/50 transition-all mx-1 md:mx-4">
+            <form onSubmit={handleSearchSubmit} className="flex-grow min-w-0 flex items-center bg-gray-50 md:bg-white rounded-full px-3 md:px-4 py-1.5 md:py-2 shadow-sm focus-within:ring-2 focus-within:ring-white/50 transition-all mx-1 md:mx-4">
               <FiSearch size={16} className="text-gray-400 mr-2 md:mr-3 flex-shrink-0" />
-                <input
+              <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search product"
-                className="flex-grow bg-transparent border-none outline-none text-base md:text-sm text-gray-800 min-w-0"
-                style={{ fontSize: "16px" }}
+                className="flex-grow bg-transparent border-none outline-none text-[16px] md:text-sm text-gray-800 min-w-0"
+                inputMode="search"
+                style={{ fontSize: "16px", WebkitTextSizeAdjust: "100%" }}
               />
               <button type="submit" className="text-gray-400 hover:text-brand-orange transition-colors flex items-center justify-center p-1 flex-shrink-0 border-l border-gray-200 ml-2 pl-2 md:border-none md:ml-0 md:pl-0">
                 <FiMic size={16} />
@@ -579,7 +580,7 @@ export default function Header({ categories = [] }) {
       )}
 
       {/* Mobile Sidebar Drawer */}
-      <div className={`fixed inset-y-0 left-0 w-[280px] bg-white z-[70] transform transition-transform duration-300 ease-in-out flex flex-col md:hidden shadow-2xl ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className={`fixed inset-y-0 left-0 w-[85vw] max-w-[280px] bg-white z-[70] transform transition-transform duration-300 ease-in-out flex flex-col md:hidden shadow-2xl ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
 
         {/* Sidebar Header */}
         <div className="bg-brand-orange p-4 flex justify-between items-center text-white">

@@ -1,13 +1,42 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import Image from 'next/image';
 import Link from 'next/link';
+import { getProductById } from "../../lib/api";
 
 export default function ProductCard({ product }) {
+    const cardRef = useRef(null);
+
+    useEffect(() => {
+        if (!product?.id || !cardRef.current) return;
+
+        const target = cardRef.current;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0];
+                if (!entry?.isIntersecting) return;
+
+                getProductById(product.id).catch(() => null);
+                observer.disconnect();
+            },
+            { rootMargin: "320px 0px", threshold: 0.01 }
+        );
+
+        observer.observe(target);
+        return () => observer.disconnect();
+    }, [product?.id]);
+
     // Generate a URL-friendly slug from the product name and append the ID
     const baseSlug = product.name ? product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'product';
     const slug = product.id ? `${baseSlug}-${product.id}` : baseSlug;
 
     return (
-        <Link href={`/product/${slug}`} className="bg-white border border-gray-100 rounded-[16px] pb-4 flex flex-col hover:border-brand-orange/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group overflow-hidden relative block">
+        <Link
+            ref={cardRef}
+            href={`/product/${slug}`}
+            className="bg-white border border-gray-100 rounded-[16px] pb-4 flex flex-col hover:border-brand-orange/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group overflow-hidden relative block"
+        >
 
             {/* Discount Badge (Top Left Absolute) */}
             {product.discount && (

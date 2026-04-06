@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FiShare2, FiMinus, FiPlus } from 'react-icons/fi';
+import { FiShare2, FiMinus, FiPlus, FiCheckCircle, FiCreditCard, FiShield, FiTruck } from 'react-icons/fi';
 import { FaStar } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
 
@@ -322,6 +322,45 @@ export default function ProductInfo({ product, onVariantImageChange }) {
             {/* Delivery Est */}
             <div className="mb-8">
                 <p className="text-sm text-gray-600 font-medium">Estimated delivery: <span className="text-gray-900 font-bold underline decoration-brand-orange cursor-pointer">0-3 days</span></p>
+            </div>
+
+            {/* Trust chips */}
+            <div className="flex flex-wrap gap-2 mb-5">
+                {[
+                    "Authentic product",
+                    "Official warranty",
+                    "Fast delivery",
+                ].map((tag) => (
+                    <span
+                        key={tag}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-700"
+                    >
+                        <FiCheckCircle className="text-brand-orange" size={14} />
+                        {tag}
+                    </span>
+                ))}
+            </div>
+
+            {/* Quick info cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-3">
+                    <h4 className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-1">
+                        <FiCreditCard className="text-brand-orange" /> Payment Options
+                    </h4>
+                    <p className="text-xs text-gray-600 leading-relaxed">Cash on delivery available. Online payment coming soon.</p>
+                </div>
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-3">
+                    <h4 className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-1">
+                        <FiShield className="text-brand-orange" /> Warranty & Policy
+                    </h4>
+                    <p className="text-xs text-gray-600 leading-relaxed">Official warranty support and easy replacement on defects.</p>
+                </div>
+                <div className="rounded-xl border border-gray-200 bg-gray-50 p-3">
+                    <h4 className="flex items-center gap-2 text-sm font-bold text-gray-900 mb-1">
+                        <FiTruck className="text-brand-orange" /> Delivery Timeline
+                    </h4>
+                    <p className="text-xs text-gray-600 leading-relaxed">Estimated delivery 0-3 working days inside major cities.</p>
+                </div>
             </div>
 
             {/* Add to Cart / Buy Now */}

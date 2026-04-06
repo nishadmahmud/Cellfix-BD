@@ -1,5 +1,6 @@
 import Hero from "../components/Hero/Hero";
 import TrustStats from "../components/TrustStats/TrustStats";
+import TopBrandProducts from "../components/TopBrandProducts/TopBrandProducts";
 import RepairServices from "../components/RepairServices/RepairServices";
 import RepairPricing from "../components/RepairPricing/RepairPricing";
 import HowItWorks from "../components/HowItWorks/HowItWorks";
@@ -226,6 +227,7 @@ export default async function Home() {
       <TrustStats />
       {/* <ShopCategories categories={categories} flashSaleProducts={flashSaleProducts} /> */}
       <RepairServices categories={categories} />
+      <TopBrandProducts />
       <RepairPricing />
 
       <NewArrivals products={newArrivals} />

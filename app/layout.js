@@ -3,6 +3,7 @@ import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import MobileBottomNav from "../components/MobileBottomNav/MobileBottomNav";
 import Providers from "../components/Providers";
+import BackgroundDataPrefetcher from "../components/Prefetch/BackgroundDataPrefetcher";
 import { getCategoriesFromServer } from "../lib/api";
 import { Suspense } from "react";
 import MetaPixel from "../components/MetaPixel";
@@ -41,6 +42,7 @@ export default async function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-800 pb-16 md:pb-0`}
       >
         <Providers>
+          <BackgroundDataPrefetcher />
           <Header categories={categories} />
           <main className="min-h-screen flex flex-col bg-white">
             <Suspense fallback={null}>

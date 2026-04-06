@@ -31,17 +31,6 @@ export default function NewArrivals({ products: apiProducts = [] }) {
                     </div>
                 </div>
 
-                {/* Category Filter Pills */}
-                <div className="flex gap-3 mb-10 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                    <style jsx>{`div::-webkit-scrollbar { display: none; }`}</style>
-                    <button className="px-5 py-2 rounded-full bg-black text-white text-xs md:text-sm font-bold whitespace-nowrap">
-                        Gadgets
-                    </button>
-                    <button className="px-5 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors text-xs md:text-sm font-semibold whitespace-nowrap">
-                        Device
-                    </button>
-                </div>
-
                 {/* Product Cards Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5">
                     {displayProducts.map((product) => (

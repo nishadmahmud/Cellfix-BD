@@ -17,7 +17,7 @@ export default function RepairServices({ categories = [] }) {
     const repairCategories = categories.filter(cat => 
         cat.name.toLowerCase().includes('repair') || 
         cat.name.toLowerCase().includes('unlock')
-    );
+    ).slice().reverse();
 
     return (
         <section className="bg-gray-50 py-16 md:py-32 relative overflow-hidden">
