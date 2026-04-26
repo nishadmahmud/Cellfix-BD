@@ -8,6 +8,7 @@ import { getCategoriesFromServer } from "../lib/api";
 import { Suspense } from "react";
 import MetaPixel from "../components/MetaPixel";
 import WhatsAppButton from "../components/Shared/WhatsAppButton";
+import PopupBanner from "../components/Popup/PopupBanner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -42,6 +43,7 @@ export default async function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-gray-800 pb-16 md:pb-0`}
       >
         <Providers>
+          <PopupBanner />
           <BackgroundDataPrefetcher />
           <Header categories={categories} />
           <main className="min-h-screen flex flex-col bg-white">

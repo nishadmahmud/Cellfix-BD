@@ -66,8 +66,8 @@ export default function Hero({ slides: apiSlides = [], banners = [] }) {
     }
 
     return (
-        <section className="w-full bg-white py-2 md:py-8 px-3 md:px-6">
-            <div className="max-w-7xl mx-auto relative overflow-hidden rounded-xl h-[220px] sm:h-[320px] md:h-[500px] shadow-lg border border-gray-100">
+        <section className="w-full bg-white">
+            <div className="relative w-full overflow-hidden h-[210px] sm:h-[300px] md:h-[420px]">
                 {displaySlides.map((slide, idx) => (
                     <div
                         key={slide.id}
@@ -83,12 +83,12 @@ export default function Hero({ slides: apiSlides = [], banners = [] }) {
                         />
                     </div>
                 ))}
-                <div className="absolute bottom-3 md:bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex gap-1.5 md:gap-2">
+                <div className="absolute bottom-4 md:bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
                     {displaySlides.map((_, idx) => (
                         <button
                             key={idx}
                             onClick={() => setCurrentSlide(idx)}
-                            className={`h-1.5 md:h-2 rounded-full transition-all duration-300 ${currentSlide === idx ? 'bg-white w-5 md:w-8' : 'bg-white/50 w-1.5 md:w-2 hover:bg-white/80'}`}
+                            className={`h-2.5 w-2.5 md:h-3 md:w-3 rounded-full border border-white/70 transition-all duration-300 ${currentSlide === idx ? 'bg-white scale-110' : 'bg-transparent hover:bg-white/40'}`}
                             aria-label={`Go to slide ${idx + 1}`}
                         />
                     ))}

@@ -25,6 +25,7 @@ export default function Header({ categories = [] }) {
   const { user, openAuthModal } = useAuth();
   const router = useRouter();
   const closeTimeout = useRef(null);
+  const searchModalInputRef = useRef(null);
 
   const repairCategories = useMemo(() => {
     return categories.filter(cat =>
@@ -41,6 +42,7 @@ export default function Header({ categories = [] }) {
   }, [categories]);
 
   const [isRepairDropdownOpen, setIsRepairDropdownOpen] = useState(false);
+  const [isGadgetsDropdownOpen, setIsGadgetsDropdownOpen] = useState(false);
   const [isMobileRepairOpen, setIsMobileRepairOpen] = useState(false);
 
   const handleCatEnter = (idx) => {
@@ -186,6 +188,14 @@ export default function Header({ categories = [] }) {
     return () => clearTimeout(timeout);
   }, [searchQuery]);
 
+  useEffect(() => {
+    if (isSearchOpen) {
+      setTimeout(() => {
+        searchModalInputRef.current?.focus();
+      }, 0);
+    }
+  }, [isSearchOpen]);
+
   const closeSearchModal = () => {
     setIsSearchOpen(false);
   };
@@ -199,7 +209,7 @@ export default function Header({ categories = [] }) {
     <>
       <header className="w-full shadow-sm sticky top-0 z-50 bg-white ios-no-zoom-scope">
         {/* Top Bar - Hidden on mobile */}
-        <div className="bg-gray-900 text-gray-300 text-xs py-2 hidden md:block">
+        <div className="hidden bg-gray-900 text-gray-300 text-xs py-2 md:block">
           <div className="max-w-7xl mx-auto flex justify-between items-center px-4 md:px-6">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-2"><FiPhone className="text-brand-orange" /> +8801714404100</span>
@@ -207,6 +217,7 @@ export default function Header({ categories = [] }) {
               <span className="flex items-center gap-2"><FiMapPin className="text-brand-orange" /> Level-4, Block-C, Shop #4C-022B, Jamuna Future Park, Dhaka</span>
             </div>
             <div className="flex gap-4 font-medium">
+              <Link href="/book-repair-now" className="hover:text-white transition-colors">Book Repair Now</Link>
               <Link href="/track-order" className="text-brand-orange font-bold hover:text-orange-300 transition-colors">Track Order</Link>
               <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
@@ -215,11 +226,11 @@ export default function Header({ categories = [] }) {
         </div>
 
         {/* Main Navigation */}
-        <div className="bg-brand-orange py-2 md:py-4 relative">
+        <div className="bg-white border-b border-gray-100 py-3 md:py-4 relative">
           <div className="max-w-7xl mx-auto flex justify-between items-center px-3 md:px-6 gap-2 md:gap-4 min-w-0">
 
             {/* Logo */}
-            <Link href="/" className="flex items-center flex-shrink-0 bg-white rounded-lg px-2 py-1 shadow-sm">
+            <Link href="/" className="flex items-center flex-shrink-0">
               <Image
                 src="/LOGO-Cellfix-BD.png"
                 alt="CellfixBD Logo"
@@ -230,8 +241,8 @@ export default function Header({ categories = [] }) {
               />
             </Link>
 
-            {/* Global Search Bar (Mobile & Desktop) */}
-            <form onSubmit={handleSearchSubmit} className="flex-grow min-w-0 flex items-center bg-gray-50 md:bg-white rounded-full px-3 md:px-4 py-1.5 md:py-2 shadow-sm focus-within:ring-2 focus-within:ring-white/50 transition-all mx-1 md:mx-4">
+            {/* Mobile Search Bar */}
+            <form onSubmit={handleSearchSubmit} className="flex md:hidden flex-grow min-w-0 items-center bg-gray-50 rounded-full px-3 py-1.5 shadow-sm transition-all mx-1">
               <FiSearch size={16} className="text-gray-400 mr-2 md:mr-3 flex-shrink-0" />
               <input
                 type="text"
@@ -248,14 +259,14 @@ export default function Header({ categories = [] }) {
             </form>
 
             {/* Desktop Nav Links */}
-            <nav className="hidden lg:flex gap-8 font-semibold text-white/90">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <nav className="hidden lg:flex gap-8 font-semibold text-gray-800">
+              <Link href="/" className="hover:text-brand-orange transition-colors">HOME</Link>
               <div className="relative group/repair"
                 onMouseEnter={() => setIsRepairDropdownOpen(true)}
                 onMouseLeave={() => setIsRepairDropdownOpen(false)}
               >
-                <Link href="/services" className="hover:text-white transition-colors flex items-center gap-1">
-                  Repair <FiChevronRight className={`transition-transform duration-200 ${isRepairDropdownOpen ? 'rotate-90' : ''}`} size={14} />
+                <Link href="/services" className="hover:text-brand-orange transition-colors flex items-center gap-1">
+                  REPAIR <FiChevronRight className={`transition-transform duration-200 ${isRepairDropdownOpen ? 'rotate-90' : ''}`} size={14} />
                 </Link>
 
                 {isRepairDropdownOpen && repairCategories.length > 0 && (
@@ -284,12 +295,49 @@ export default function Header({ categories = [] }) {
                   </div>
                 )}
               </div>
-              <Link href="/category" className="hover:text-white transition-colors">Shop Gadgets</Link>
+              <div
+                className="relative group/gadgets"
+                onMouseEnter={() => setIsGadgetsDropdownOpen(true)}
+                onMouseLeave={() => setIsGadgetsDropdownOpen(false)}
+              >
+                <Link href="/category" className="hover:text-brand-orange transition-colors flex items-center gap-1">
+                  GADGETS <FiChevronRight className={`transition-transform duration-200 ${isGadgetsDropdownOpen ? 'rotate-90' : ''}`} size={14} />
+                </Link>
+
+                {isGadgetsDropdownOpen && shopCategories.length > 0 && (
+                  <div className="absolute top-full left-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] mt-2">
+                    <div className="px-5 mb-2 border-b border-gray-50 pb-2">
+                      <h3 className="text-[11px] font-black text-brand-orange uppercase tracking-wider">Shop Categories</h3>
+                    </div>
+                    <ul className="max-h-[60vh] overflow-y-auto px-2">
+                      {shopCategories.map(cat => (
+                        <li key={cat.id || cat.category_id}>
+                          <Link
+                            href={`/category/${cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-')}`}
+                            onClick={() => setIsGadgetsDropdownOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-gray-700 font-semibold rounded-lg hover:bg-orange-50 hover:text-brand-orange transition-all"
+                          >
+                            {cat.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-2 pt-2 border-t border-gray-50 px-4">
+                      <Link href="/category" className="text-xs font-bold text-gray-400 hover:text-brand-orange transition-colors">
+                        View All Categories &rarr;
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             </nav>
 
             {/* Desktop Action Icons */}
             <div className="hidden md:flex gap-4 items-center">
-              <button onClick={handleUserClick} className="text-white hover:text-white/80 transition-colors p-1" aria-label="Account">
+              <button onClick={() => setIsSearchOpen((prev) => !prev)} className="text-gray-800 hover:text-brand-orange transition-colors p-1" aria-label="Search">
+                <FiSearch size={22} />
+              </button>
+              <button onClick={handleUserClick} className="text-gray-800 hover:text-brand-orange transition-colors p-1" aria-label="Account">
                 {user?.image ? (
                   <div className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-white/50">
                     <Image src={user.image} alt="Profile" width={28} height={28} className="w-full h-full object-cover" unoptimized />
@@ -302,7 +350,7 @@ export default function Header({ categories = [] }) {
                   <FiUser size={22} />
                 )}
               </button>
-              <button onClick={openCart} className="text-white hover:text-white/80 transition-colors relative p-1" aria-label="Cart">
+              <button onClick={openCart} className="text-gray-800 hover:text-brand-orange transition-colors relative p-1" aria-label="Cart">
                 <FiShoppingCart size={22} />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-white text-brand-orange text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm">
@@ -315,7 +363,7 @@ export default function Header({ categories = [] }) {
             {/* Mobile Hamburger Menu */}
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="md:hidden text-white hover:text-white/80 transition-colors p-1.5 flex-shrink-0"
+              className="md:hidden text-gray-800 hover:text-brand-orange transition-colors p-1.5 flex-shrink-0"
               aria-label="Menu"
             >
               <FiMenu size={24} />
@@ -325,7 +373,28 @@ export default function Header({ categories = [] }) {
           {/* Global Search Results Dropdown */}
           {isSearchOpen && (
             <div className="absolute top-[100%] left-0 right-0 bg-white border-b border-gray-200 shadow-xl z-50 max-h-[70vh] flex flex-col pt-3 pb-0 border-t">
-              {isSearching ? (
+              <div className="px-4 pb-3 border-b border-gray-100">
+                <form onSubmit={handleSearchSubmit} className="flex items-center bg-gray-50 rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-brand-orange/20">
+                  <FiSearch size={16} className="text-gray-400 mr-2" />
+                  <input
+                    ref={searchModalInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="w-full bg-transparent border-none outline-none text-sm text-gray-800"
+                  />
+                  <button type="button" onClick={closeSearchModal} className="text-xs text-gray-500 hover:text-brand-orange transition-colors ml-2">
+                    Close
+                  </button>
+                </form>
+              </div>
+
+              {!searchQuery.trim() ? (
+                <div className="p-10 text-center text-gray-500">
+                  Start typing to search products.
+                </div>
+              ) : isSearching ? (
                 <div className="p-12 flex justify-center items-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange"></div>
                 </div>
@@ -436,7 +505,7 @@ export default function Header({ categories = [] }) {
         </div>
 
         {/* Desktop Category Strip */}
-        <div className="hidden md:block bg-white py-3 text-sm border-b border-gray-100 shadow-sm relative z-40">
+        <div className="hidden">
           <div
             className="max-w-7xl mx-auto flex flex-wrap gap-2 px-6 items-center"
             onMouseLeave={handleCatLeave}
@@ -583,8 +652,8 @@ export default function Header({ categories = [] }) {
       <div className={`fixed inset-y-0 left-0 w-[85vw] max-w-[280px] bg-white z-[70] transform transition-transform duration-300 ease-in-out flex flex-col md:hidden shadow-2xl ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
 
         {/* Sidebar Header */}
-        <div className="bg-brand-orange p-4 flex justify-between items-center text-white">
-          <Link href="/" onClick={closeSidebar} className="bg-white rounded-lg px-2 py-1 shadow-sm">
+        <div className="bg-white border-b border-gray-100 p-4 flex justify-between items-center text-gray-800">
+          <Link href="/" onClick={closeSidebar} className="rounded-lg px-1 py-1">
             <Image
               src="/LOGO-Cellfix-BD.png"
               alt="CellfixBD Logo"
@@ -593,7 +662,7 @@ export default function Header({ categories = [] }) {
               className="h-8 w-auto object-contain"
             />
           </Link>
-          <button onClick={closeSidebar} className="p-2 hover:bg-white/20 rounded-full transition-colors">
+          <button onClick={closeSidebar} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <FiX size={24} />
           </button>
         </div>
@@ -667,6 +736,9 @@ export default function Header({ categories = [] }) {
           </Link>
           <Link href="/track-order" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 font-semibold border-b border-gray-50 text-brand-orange bg-orange-50/50 hover:bg-orange-50">
             <span>Track Order</span><FiChevronRight size={16} className="text-brand-orange" />
+          </Link>
+          <Link href="/book-repair-now" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 font-semibold border-b border-gray-50 text-gray-700 hover:text-brand-orange hover:bg-orange-50/30">
+            <span>Book Repair Now</span><FiChevronRight size={16} className="text-gray-400" />
           </Link>
 
           <div className="px-4 py-3 bg-gray-50 text-xs font-bold text-gray-400 uppercase tracking-wider mt-2 flex items-center gap-2">
