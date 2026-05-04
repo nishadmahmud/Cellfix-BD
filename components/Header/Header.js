@@ -9,6 +9,35 @@ import { searchProducts } from '../../lib/api';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 
+/** Three rows with a dot left of each bar (desktop menu trigger style). */
+function BulletedMenuIcon({ className = '', size = 22 }) {
+  const barH = Math.max(2, Math.round(size * 0.1));
+  const rowGap = Math.max(3, Math.round(size * 0.16));
+  const dot = Math.max(3, Math.round(size * 0.14));
+  const colGap = Math.round(size * 0.14);
+  return (
+    <span
+      className={`inline-flex flex-col justify-center text-current ${className}`}
+      style={{ width: size, height: size }}
+      aria-hidden
+    >
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className="flex items-center w-full"
+          style={{ columnGap: colGap, marginBottom: i < 2 ? rowGap : 0 }}
+        >
+          <span
+            className="rounded-full bg-current flex-shrink-0"
+            style={{ width: dot, height: dot }}
+          />
+          <span className="flex-1 rounded-full bg-current min-w-0" style={{ height: barH }} />
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export default function Header({ categories = [] }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,6 +54,8 @@ export default function Header({ categories = [] }) {
   const { user, openAuthModal } = useAuth();
   const router = useRouter();
   const closeTimeout = useRef(null);
+  const repairCloseTimerRef = useRef(null);
+  const gadgetsCloseTimerRef = useRef(null);
   const searchModalInputRef = useRef(null);
 
   const repairCategories = useMemo(() => {
@@ -45,6 +76,38 @@ export default function Header({ categories = [] }) {
   const [isGadgetsDropdownOpen, setIsGadgetsDropdownOpen] = useState(false);
   const [isMobileRepairOpen, setIsMobileRepairOpen] = useState(false);
 
+  const openRepairDropdown = () => {
+    if (repairCloseTimerRef.current) {
+      clearTimeout(repairCloseTimerRef.current);
+      repairCloseTimerRef.current = null;
+    }
+    setIsRepairDropdownOpen(true);
+  };
+
+  const scheduleRepairDropdownClose = () => {
+    if (repairCloseTimerRef.current) clearTimeout(repairCloseTimerRef.current);
+    repairCloseTimerRef.current = setTimeout(() => {
+      setIsRepairDropdownOpen(false);
+      repairCloseTimerRef.current = null;
+    }, 220);
+  };
+
+  const openGadgetsDropdown = () => {
+    if (gadgetsCloseTimerRef.current) {
+      clearTimeout(gadgetsCloseTimerRef.current);
+      gadgetsCloseTimerRef.current = null;
+    }
+    setIsGadgetsDropdownOpen(true);
+  };
+
+  const scheduleGadgetsDropdownClose = () => {
+    if (gadgetsCloseTimerRef.current) clearTimeout(gadgetsCloseTimerRef.current);
+    gadgetsCloseTimerRef.current = setTimeout(() => {
+      setIsGadgetsDropdownOpen(false);
+      gadgetsCloseTimerRef.current = null;
+    }, 220);
+  };
+
   const handleCatEnter = (idx) => {
     if (closeTimeout.current) {
       clearTimeout(closeTimeout.current);
@@ -57,7 +120,7 @@ export default function Header({ categories = [] }) {
   const handleCatLeave = () => {
     closeTimeout.current = setTimeout(() => {
       setHoveredCatIdx(null);
-    }, 150); // 150ms buffer to reach the modal
+    }, 400);
   };
 
   const handleModalEnter = () => {
@@ -196,6 +259,23 @@ export default function Header({ categories = [] }) {
     }
   }, [isSearchOpen]);
 
+  useEffect(() => {
+    return () => {
+      if (closeTimeout.current) clearTimeout(closeTimeout.current);
+      if (repairCloseTimerRef.current) clearTimeout(repairCloseTimerRef.current);
+      if (gadgetsCloseTimerRef.current) clearTimeout(gadgetsCloseTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isSidebarOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setIsSidebarOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isSidebarOpen]);
+
   const closeSearchModal = () => {
     setIsSearchOpen(false);
   };
@@ -262,15 +342,16 @@ export default function Header({ categories = [] }) {
             <nav className="hidden lg:flex gap-8 font-semibold text-gray-800">
               <Link href="/" className="hover:text-brand-orange transition-colors">HOME</Link>
               <div className="relative group/repair"
-                onMouseEnter={() => setIsRepairDropdownOpen(true)}
-                onMouseLeave={() => setIsRepairDropdownOpen(false)}
+                onMouseEnter={openRepairDropdown}
+                onMouseLeave={scheduleRepairDropdownClose}
               >
                 <Link href="/services" className="hover:text-brand-orange transition-colors flex items-center gap-1">
                   REPAIR <FiChevronRight className={`transition-transform duration-200 ${isRepairDropdownOpen ? 'rotate-90' : ''}`} size={14} />
                 </Link>
 
                 {isRepairDropdownOpen && repairCategories.length > 0 && (
-                  <div className="absolute top-full left-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] mt-2">
+                  <div className="absolute top-full left-0 z-[100] pt-2 min-w-[16rem]">
+                  <div className="w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4">
                     <div className="px-5 mb-2 border-b border-gray-50 pb-2">
                       <h3 className="text-[11px] font-black text-brand-orange uppercase tracking-wider">Our Fixes</h3>
                     </div>
@@ -293,19 +374,21 @@ export default function Header({ categories = [] }) {
                       </Link>
                     </div>
                   </div>
+                  </div>
                 )}
               </div>
               <div
                 className="relative group/gadgets"
-                onMouseEnter={() => setIsGadgetsDropdownOpen(true)}
-                onMouseLeave={() => setIsGadgetsDropdownOpen(false)}
+                onMouseEnter={openGadgetsDropdown}
+                onMouseLeave={scheduleGadgetsDropdownClose}
               >
                 <Link href="/category" className="hover:text-brand-orange transition-colors flex items-center gap-1">
                   GADGETS <FiChevronRight className={`transition-transform duration-200 ${isGadgetsDropdownOpen ? 'rotate-90' : ''}`} size={14} />
                 </Link>
 
                 {isGadgetsDropdownOpen && shopCategories.length > 0 && (
-                  <div className="absolute top-full left-0 w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4 z-[100] mt-2">
+                  <div className="absolute top-full left-0 z-[100] pt-2 min-w-[16rem]">
+                  <div className="w-64 bg-white shadow-2xl rounded-xl border border-gray-100 py-4">
                     <div className="px-5 mb-2 border-b border-gray-50 pb-2">
                       <h3 className="text-[11px] font-black text-brand-orange uppercase tracking-wider">Shop Categories</h3>
                     </div>
@@ -327,6 +410,7 @@ export default function Header({ categories = [] }) {
                         View All Categories &rarr;
                       </Link>
                     </div>
+                  </div>
                   </div>
                 )}
               </div>
@@ -357,6 +441,15 @@ export default function Header({ categories = [] }) {
                     {cartCount}
                   </span>
                 )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsSidebarOpen(true)}
+                className="hidden lg:flex text-gray-800 hover:text-brand-orange transition-colors p-1 items-center justify-center flex-shrink-0"
+                aria-label="Open menu"
+                aria-expanded={isSidebarOpen}
+              >
+                <BulletedMenuIcon size={22} />
               </button>
             </div>
 
@@ -640,16 +733,23 @@ export default function Header({ categories = [] }) {
         </div>
       </header>
 
-      {/* Mobile Sidebar Overlay */}
+      {/* Nav menu overlay (mobile + desktop) */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[60] md:hidden transition-opacity"
+          className="fixed inset-0 bg-black/50 z-[60] transition-opacity"
           onClick={closeSidebar}
+          aria-hidden
         />
       )}
 
-      {/* Mobile Sidebar Drawer */}
-      <div className={`fixed inset-y-0 left-0 w-[85vw] max-w-[280px] bg-white z-[70] transform transition-transform duration-300 ease-in-out flex flex-col md:hidden shadow-2xl ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      {/* Slide-out menu: mobile + lg+ desktop */}
+      <div
+        className={`fixed inset-y-0 left-0 w-[85vw] max-w-[280px] lg:max-w-[380px] bg-white z-[70] transform transition-transform duration-300 ease-in-out flex flex-col shadow-2xl ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full pointer-events-none'}`}
+        role="dialog"
+        aria-modal={isSidebarOpen}
+        aria-hidden={!isSidebarOpen}
+        aria-label="Site menu"
+      >
 
         {/* Sidebar Header */}
         <div className="bg-white border-b border-gray-100 p-4 flex justify-between items-center text-gray-800">
@@ -731,7 +831,7 @@ export default function Header({ categories = [] }) {
               </div>
             )}
           </div>
-          <Link href="/shop" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 text-gray-700 font-semibold border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
+          <Link href="/category" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 text-gray-700 font-semibold border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
             <span>Shop Gadgets</span><FiChevronRight size={16} className="text-gray-400" />
           </Link>
           <Link href="/track-order" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 font-semibold border-b border-gray-50 text-brand-orange bg-orange-50/50 hover:bg-orange-50">
@@ -739,6 +839,35 @@ export default function Header({ categories = [] }) {
           </Link>
           <Link href="/book-repair-now" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 font-semibold border-b border-gray-50 text-gray-700 hover:text-brand-orange hover:bg-orange-50/30">
             <span>Book Repair Now</span><FiChevronRight size={16} className="text-gray-400" />
+          </Link>
+
+          <div className="px-4 py-3 bg-gray-50 text-xs font-bold text-gray-400 uppercase tracking-wider mt-2">
+            Company
+          </div>
+          <Link href="/about" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3 text-sm text-gray-600 border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
+            <span>About Us</span><FiChevronRight size={14} className="text-gray-400" />
+          </Link>
+          <Link href="/contact" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3 text-sm text-gray-600 border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
+            <span>Contact</span><FiChevronRight size={14} className="text-gray-400" />
+          </Link>
+          <Link href="/blog" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3 text-sm text-gray-600 border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
+            <span>Blog</span><FiChevronRight size={14} className="text-gray-400" />
+          </Link>
+          <Link href="/sell-phone" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3 text-sm text-gray-600 border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
+            <span>Sell Your Phone</span><FiChevronRight size={14} className="text-gray-400" />
+          </Link>
+
+          <div className="px-4 py-3 bg-gray-50 text-xs font-bold text-gray-400 uppercase tracking-wider mt-2">
+            Policies
+          </div>
+          <Link href="/privacy" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3 text-sm text-gray-600 border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
+            <span>Privacy Policy</span><FiChevronRight size={14} className="text-gray-400" />
+          </Link>
+          <Link href="/terms" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3 text-sm text-gray-600 border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
+            <span>Terms of Service</span><FiChevronRight size={14} className="text-gray-400" />
+          </Link>
+          <Link href="/refund" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3 text-sm text-gray-600 border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
+            <span>Refund Policy</span><FiChevronRight size={14} className="text-gray-400" />
           </Link>
 
           <div className="px-4 py-3 bg-gray-50 text-xs font-bold text-gray-400 uppercase tracking-wider mt-2 flex items-center gap-2">
