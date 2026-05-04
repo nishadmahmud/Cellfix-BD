@@ -130,18 +130,17 @@ export default function Header({ categories = [] }) {
     }
   };
 
-  const defaultCategories = [
-    { name: "iPhones", slug: "iphones" },
-    { name: "MacBooks", slug: "macbooks" },
-    { name: "Accessories", slug: "accessories" },
-    { name: "Chargers", slug: "chargers" },
-    { name: "Used Phones", slug: "Phones" }
-  ];
-
   const displayCategories = useMemo(() => {
+    const defaultCategories = [
+      { name: "iPhones", slug: "iphones" },
+      { name: "MacBooks", slug: "macbooks" },
+      { name: "Accessories", slug: "accessories" },
+      { name: "Chargers", slug: "chargers" },
+      { name: "Used Phones", slug: "Phones" },
+    ];
     const combined = [...shopCategories, ...repairCategories];
     return combined.length > 0 ? combined : defaultCategories;
-  }, [shopCategories, repairCategories, defaultCategories]);
+  }, [shopCategories, repairCategories]);
 
   const handleUserClick = () => {
     if (user) {
@@ -445,7 +444,7 @@ export default function Header({ categories = [] }) {
               <button
                 type="button"
                 onClick={() => setIsSidebarOpen(true)}
-                className="hidden lg:flex text-gray-800 hover:text-brand-orange transition-colors p-1 items-center justify-center flex-shrink-0"
+                className="hidden md:flex text-gray-800 hover:text-brand-orange transition-colors p-1 items-center justify-center flex-shrink-0"
                 aria-label="Open menu"
                 aria-expanded={isSidebarOpen}
               >
@@ -718,7 +717,7 @@ export default function Header({ categories = [] }) {
                                   <FiGrid size={24} />
                                 </div>
                                 <h4 className="text-gray-900 font-bold mb-1">More items coming soon</h4>
-                                <p className="text-sm text-gray-400 max-w-xs mx-auto">We're currently updating our catalog for this category. Check back soon for new arrivals!</p>
+                                <p className="text-sm text-gray-400 max-w-xs mx-auto">We&apos;re currently updating our catalog for this category. Check back soon for new arrivals!</p>
                               </div>
                             )}
                           </div>
@@ -831,7 +830,7 @@ export default function Header({ categories = [] }) {
               </div>
             )}
           </div>
-          <Link href="/category" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 text-gray-700 font-semibold border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
+          <Link href="/shop" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 text-gray-700 font-semibold border-b border-gray-50 hover:text-brand-orange hover:bg-orange-50/30">
             <span>Shop Gadgets</span><FiChevronRight size={16} className="text-gray-400" />
           </Link>
           <Link href="/track-order" onClick={closeSidebar} className="flex items-center justify-between px-5 py-3.5 font-semibold border-b border-gray-50 text-brand-orange bg-orange-50/50 hover:bg-orange-50">
